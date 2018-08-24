@@ -120,7 +120,6 @@ _Git will be accessed regularly throughout the week to ensure that any Git probl
 
 _Regularly pulling from the git repo will ensure that there are recent files available on team members devices. This means that in the situation where the code is lost from the server, the files are still available and can be upload to another repository to continue production._
 
--
   - **Gitlab stops functioning correctly**
 
 High Impact | Low Likelihood
@@ -129,7 +128,6 @@ _As GitLab will be accessed regularly throughout the week, any problems with Git
 
 _Monash E-Solutions (providers of the GitLab Hosting) does regular backups of the code, which will mean that any loss will only be recent code. Additionally each of the students will have a local copy of the code. These can be used to reconstruct the code if the GitLab instance comes back online shortly. Alternatively other Git providers such as BitBucket or Github could be used to host the code using the local copies on the teams devices._
 
--
   - **Loss of work from bad git practices**
 
 Moderate Impact | Moderate Likelihood
@@ -156,7 +154,7 @@ _This risk has a high likelihood of occuring as estimations are usually not very
 
 ## Organisational
 
-- **--**** A team member gets sick or is temporarily unavailable for other reasons**
+- **A team member gets sick or is temporarily unavailable for other reasons**
 
 Low Impact | Low Likelihood
 
@@ -174,14 +172,14 @@ Moderate Impact | Low Likelihood
 
 _This risk can be easily identified given that the affected team member speaks up about their troubles early. Doing so will ensure they receive a sufficient amount of help, as well as receive valuable advice from other team members. The risk can be mitigated by double checking with each team member if their share of the work is fair, and they believe they are capable of completing that work within a specific deadline. If they think it isn&#39;t fair, then they should discuss these matters with the rest of the team and get it sorted out immediately to avoid risk of submitting work that is either overdue, or low in quality._
 
-- ** Introduction requirements that are infeasible or sudden increase in requirements**
+- **Introduction requirements that are infeasible or sudden increase in requirements**
 
 Moderate Impact | Moderate Likelihood
 
 _Infeasible requirements can be determined by making a proper attempt to meet them first, and obtaining conclusive evidence that suggests that the requirements in question cannot be done. One way of mitigating this risk is to ignore the requirement entirely, given that we inform the client beforehand. This ensures we are not misleading the client. Another way to mitigate this risk is to renegotiate the set of initial requirements with the client so that each of the requirements can be reached. Abrupt increases in requirements should be looked at by the whole team the moment they are given out. This is so that it gives more time for the team to adapt to the new set of requirements, and adjust the product accordingly._
 
-- ** Security and Privacy**
-  - ** User credentials are stolen**
+- **Security and Privacy**
+  - **User credentials are stolen**
 
 High Impact | Low Likelihood
 
