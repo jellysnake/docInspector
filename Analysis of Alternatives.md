@@ -10,10 +10,10 @@ They are: _Python_, via a CLI program; _Java_, via GUI based program; and _JavaS
 
 We also have a few criteria defined by both the project requirements and by the team members. These are as follows:
 
-1. **1.** The language needs to be able to use the Google Docs API
-2. **2.** The language needs to be able to provide some form of visual output or interaction
-3. **3.** Using the program needs to be straightforward, including how to run it.
-4. **4.** The team needs to be comfortable in developing in the language.
+1. The language needs to be able to use the Google Docs API
+2. The language needs to be able to provide some form of visual output or interaction
+3. Using the program needs to be straightforward, including how to run it.
+4. The team needs to be comfortable in developing in the language.
 
 Notably, the most important criteria are number one, as this is a crucial part of the project spec and number four. As such we shall be prioritising languages that score well on these criteria.
 
