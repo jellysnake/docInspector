@@ -10,7 +10,7 @@ For teachers and tutors who need to track the contribution of their students in 
 
 | **Name** | **E-mail** | **Facebook** |
 | --- | --- | --- |
-| Quinn Roberts | [qrob0001@student.monash.edu](mailto:qrob0001@student.monash.edu) | [https://www.facebook.com/jellysnake](https://www.facebook.com/jellysnake) |
+| Quinn Roberts | [qrob0001@student.monash.edu](mailto:qrob0001@student.monash.edu) | https://www.facebook.com/jellysnake |
 | Simon Schippl | [ssch50@student.monash.edu](mailto:ssch50@student.monash.edu) | _Simon Schippl_ |
 | Ganesh Ukwatta | [gwan0006@student.monash.edu](mailto:gwan0006@student.monash.edu) | _Ganesh Ukwatta_ |
 | Darcy Trenfield | [ditre3@student.monash.edu](mailto:ditre3@student.monash.edu) | _Darcy Trenfield_ |
@@ -76,9 +76,9 @@ To record the time spent on the development of each feature, we intend to edit t
 
 ## Technical
 
-- **--**** Team member lacks knowledge in required areas**
+- **Team member lacks knowledge in required areas**
 
-Low Impact **|** Moderate likelihood.
+Low Impact | Moderate likelihood.
 
 _This risk would be identified by the scrum master confirming with each team member that they feel capable of doing the assigned tasks._
 
@@ -86,33 +86,33 @@ _This is a risk that would be identified at the start of the sprint, during the 
 
 _Also of note is that this will be mitigated as each team member selects the bulk of the tasks themselves. Hence a team member will most likely not select a task they don&#39;t feel they can complete._
 
-- **--**** Unfamiliarity with language causing delays in development**
+- **Unfamiliarity with language causing delays in development**
 
-Moderate Impact **|** Low Likelihood
+Moderate Impact | Low Likelihood
 
 _This will be identified by the scrum master who will communicate with each team member about how they feel about their skills and familiarity of the language before development commences._
 
 _Likewise to the above this will mostly be mitigated by both choosing the language to implement and by allocating extended time for learning the language. Additionally as features must be reviewed by a separate team member before they can be merged this will ensure that team members with more knowledge can ensure that the code is logical and reasonable._
 
-- **--**** Google drive changing API**
-  - **--**** Adding/removing/changing URL interactions**
+- **Google drive changing API**
+  - **Adding/removing/changing URL interactions**
 
-High Impact **|** Low Likelihood
+High Impact | Low Likelihood
 
 _The team will keep track of changes that Google makes to the API if any by checking the API site multiple times weekly._
 
 _If Google was to suddenly remove or change the API then the project would simply have to be re-written to handle this. Thankfully it is very low risk, however if Google were to remove all 3rd party interactions with Google Docs then this project becomes technically impossible. If the API is changed then the relevant sections of code will need to be re-written to handle this. If the API is removed then alternatives such as directly scraping the HTML would need to be considered._
 
-- **--**** Hardware issues for a team member**
+- **Hardware issues for a team member**
 
-Moderate Impact **|** Moderate Likelihood
+Moderate Impact | Moderate Likelihood
 
 _Team members affected by hardware issues will communicate with team members about their problems to alert the team._
 
 _As we will be utilising a Git server and practicing good git practices such as pushing to remote often any work lost should be minimal. Additionally Monash provides computers through their labs and their libraries. This means that the student should be able to continue working through these facilities. The workload for that student can also be distributed throughout the other team members_
 
-- **--**** Git issues**
-  - **--**** Loss of code from server**
+- **Git issues**
+  - **Loss of code from server**
 
 High Impact | Low Likelihood
 
@@ -121,7 +121,7 @@ _Git will be accessed regularly throughout the week to ensure that any Git probl
 _Regularly pulling from the git repo will ensure that there are recent files available on team members devices. This means that in the situation where the code is lost from the server, the files are still available and can be upload to another repository to continue production._
 
 -
-  - **--**** Gitlab stops functioning correctly**
+  - **Gitlab stops functioning correctly**
 
 High Impact | Low Likelihood
 
@@ -130,7 +130,7 @@ _As GitLab will be accessed regularly throughout the week, any problems with Git
 _Monash E-Solutions (providers of the GitLab Hosting) does regular backups of the code, which will mean that any loss will only be recent code. Additionally each of the students will have a local copy of the code. These can be used to reconstruct the code if the GitLab instance comes back online shortly. Alternatively other Git providers such as BitBucket or Github could be used to host the code using the local copies on the teams devices._
 
 -
-  - **--**** Loss of work from bad git practices**
+  - **Loss of work from bad git practices**
 
 Moderate Impact | Moderate Likelihood
 
@@ -138,7 +138,7 @@ _The Git repository will be assessed weekly at the team meetings to ensure that 
 
 _Likewise to the prior risk, one of the main methods this is mitigated is by each team member having local copies of the code and by the regular backups taken by e-solutions. In the event of a team member making a git related mistake that irrevocably destroys the repository we will ask the facilitator to either reset the git repo using the backups or to create a new one that we will populate with our local copies._
 
-- **--**** Communications methods go down**
+- **Communications methods go down**
 
 Moderate Impact | Low Likelihood
 
@@ -146,7 +146,7 @@ _Communication between team members will occur regularly and as such, problems w
 
 _This is distinct from the risk of a team member going AWOL. This is specific to situations like an outage in Messenger or Email services. If our primary method of communication, Messenger, is down we will use Email as a backup. If that also goes down then we will organise a new communication method in our thursday meeting. In the meantime we will continue working on our features as before until we can communicate._
 
-- **--**** Estimation of time constraints are found to be incorrect (not enough time)**
+- **Estimation of time constraints are found to be incorrect (not enough time)**
 
 Moderate Impact | High Likelihood
 
@@ -162,26 +162,26 @@ Low Impact | Low Likelihood
 
 _This risk can be identified if the affected team member does not inform the rest of the team prior to the weekly meeting. Sometimes these occurrences can be abrupt, where the affected team member can&#39;t do anything about it. This risk can be mitigated by contacting the affected team member through other means such as email or Facebook. These members should be informed on what they missed out on, and what they can do to catch up._
 
-- **--**** A team member drops out permanently**
+- **A team member drops out permanently**
 
 Low Impact | Low Likelihood
 
 _This risk is not easily identifiable since other team members rely on the affected team member to complete the tasks allocated to them. Signs that indicate a team member intends on dropping out include the lack of contribution to the project and the lack of communication with other team members at weekly meetings. If this risk occurs, nothing can be done to bring the team member back, and therefore cannot be mitigated. The load that was shared to the affected team member must be split amongst the remaining team members, and the project will continue from there._
 
-- **--**** Team member not completing their section of the work / uneven sharing of work**
+- **Team member not completing their section of the work / uneven sharing of work**
 
 Moderate Impact | Low Likelihood
 
 _This risk can be easily identified given that the affected team member speaks up about their troubles early. Doing so will ensure they receive a sufficient amount of help, as well as receive valuable advice from other team members. The risk can be mitigated by double checking with each team member if their share of the work is fair, and they believe they are capable of completing that work within a specific deadline. If they think it isn&#39;t fair, then they should discuss these matters with the rest of the team and get it sorted out immediately to avoid risk of submitting work that is either overdue, or low in quality._
 
-- **--**** Introduction requirements that are infeasible or sudden increase in requirements       **
+- ** Introduction requirements that are infeasible or sudden increase in requirements**
 
 Moderate Impact | Moderate Likelihood
 
 _Infeasible requirements can be determined by making a proper attempt to meet them first, and obtaining conclusive evidence that suggests that the requirements in question cannot be done. One way of mitigating this risk is to ignore the requirement entirely, given that we inform the client beforehand. This ensures we are not misleading the client. Another way to mitigate this risk is to renegotiate the set of initial requirements with the client so that each of the requirements can be reached. Abrupt increases in requirements should be looked at by the whole team the moment they are given out. This is so that it gives more time for the team to adapt to the new set of requirements, and adjust the product accordingly._
 
-- **--**** Security and Privacy**
-  - **--**** User credentials are stolen**
+- ** Security and Privacy**
+  - ** User credentials are stolen**
 
 High Impact | Low Likelihood
 
