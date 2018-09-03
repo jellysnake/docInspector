@@ -1,5 +1,5 @@
 #Opens data file 
-Sprintdoc = open('Sprintdoc.txt')
+Sprintdoc = open('ProjectPlanData.txt')
 
 #Global variables 
 finder = 'modifiedDate'
