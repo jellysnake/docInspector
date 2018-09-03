@@ -5,6 +5,7 @@ Sprintdoc = open('ProjectPlanData.txt')
 finder = 'modifiedDate'
 dateList = []
 
+#Formats entered dates into list
 def formatDateRange(dateRange):
     dateRangeList = []
     dateRangeList.append(dateRange[:10])
@@ -22,7 +23,7 @@ def formatDate(line, finder):
     line = line[:10]
     return line
 
-#Checks if user name already in docNames list
+#Checks if date already in dateList
 def checkDate(dateList, line):
     if len(dateList)>0:
         for i in range(len(dateList)):
@@ -32,13 +33,14 @@ def checkDate(dateList, line):
     else:
         return True
 
+#Checks whether date within specified range
 def withinRange(dateRangeList, line):
     if line>=dateRangeList[0] and line<=dateRangeList[1]:
         return True
     else:
         return False
     
-#checks data file for user names and adds them to docNames list 
+#checks data file for dates and adds to dateList 
 def findDate(dateRangeList):
     for line in Sprintdoc:
         if finder in line:
@@ -48,7 +50,7 @@ def findDate(dateRangeList):
                 if checkDate(dateList, line) == True:
                     dateList.append(line)
 
-#Prints user names 
+#Prints dates 
 def printdateList(dateList):
     print('\nDates of document edit between specified range are:\n')
     for i in range(len(dateList)):
