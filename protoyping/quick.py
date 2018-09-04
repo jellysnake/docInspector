@@ -114,9 +114,15 @@ class ChangeData:
                     self.editors['unknown'].mergeIn(users[user])
 
     def totalAdditions(self):
+        """
+        :return: The total number of characters added in this revision
+        """
         return self.total.additions
 
     def totalRemovals(self):
+        """
+        :return: The total number of characters removed in this revision
+        """
         return self.total.removals
 
     def totalChanges(self):
@@ -124,6 +130,12 @@ class ChangeData:
         :return: The total number of characters edits in this revision
         """
         return self.total.changes
+
+    def getUsers(self):
+        """
+        :return: all the users that have edited this revision
+        """
+        return self.editors.keys()
 
 
 class RevisionMetadata:
