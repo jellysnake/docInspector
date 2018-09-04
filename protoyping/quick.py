@@ -6,6 +6,10 @@ from oauth2client import file, client, tools
 
 
 class ChangeData:
+    """
+    Represents a single change made in a revision. Multiple of these make up a revision.
+    """
+
     def __init__(self, data):
         self.startChar = data['si']
         self.endChar = data['ei']
@@ -21,6 +25,11 @@ class ChangeData:
 
 
 class RevisionData:
+    """
+    A single revision.
+    It is comprised of multiple changes, and in turn there are multiple of these in a document
+    """
+
     def __init__(self, data, requester):
         self.startId = data['start']
         self.endId = data['end']
@@ -50,6 +59,10 @@ class RevisionData:
 
 
 class UnsafeRequester:
+    """
+    Makes requests to the unsafe API
+    """
+
     def __init__(self, http, docId):
         self.http = http
         self.docId = docId
@@ -63,6 +76,9 @@ class UnsafeRequester:
             f"includes_info_params=true")
         return json.loads(content[5:])
 
+    def requestRevisionRange(self, startId, endId):
+
+
     def requestList(self):
         (_, content) = self.http.request(f"https://docs.google.com/document/d/{self.docId}/revisions/"
                                          f"tiles?id={self.docId}&"
@@ -73,6 +89,10 @@ class UnsafeRequester:
 
 
 class User:
+    """
+    Represents a single user.
+    """
+
     def __init__(self, userId, data):
         self.id = userId
         self.name = data['name']
@@ -99,6 +119,11 @@ class RevisionList(list):
         return self[0].startId, self[-1].endId
 
 class Document:
+    """
+    Represents a single document.
+    This is made up  of multiple revisions.
+    """
+
     def __init__(self, http, docId):
         self.requester = UnsafeRequester(http, docId)
         self.docId = docId
