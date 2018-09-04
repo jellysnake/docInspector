@@ -225,52 +225,14 @@ class User:
         self.color = data['color']
         self.anonymous = data['anonymous']
 
-
-class RevisionList(list):
-    def __init__(self, data, requester):
-        """
-        Builds a new revision list from the raw data
-
-        :param data: The raw data of the revision list
-        :param requester: The requester to make subsequent calls to the api with.
-        """
-        self.startRevision = data['firstRev']
-        revisions = []
-        self.iterId = 0
-        self.requester = requester
-        for revision in data['tileInfo']:
-            revisions.append(RevisionMetadata(revision, self.requester))
-        super().__init__(revisions)
-        self.sort(key=lambda x: x.startId)
-
-    def __str__(self):
-        """
-        :return: A string representation of all the revisions in this
-        """
-        return f"[{', '.join([str(revision) for revision in self])}]"
-
-    def getRevisionRange(self):
-        """
-        Get the start and end id of the revisions in this list
-        :return:
-        """
-        return self[0].startId, self[-1].endId
-
-    def getForRange(self, startId, endId):
-        """
-        Get a revision representing a specific range
-        :param startId: The start id of the range
-        :param endId: The end id of the range
-        :return: A revision for that range.
-        """
-        data = self.requester.requestRevisionRange(startId, endId)
-        return RevisionMetadata(data, requester=self.requester)
+    def getId(self):
+        return self.color
 
 
 class Document:
     """
     Represents a single document.
-    This is made up  of multiple revisions.
+    This is made up of multiple revisions.
     """
 
     def __init__(self, http, docId):
@@ -283,15 +245,25 @@ class Document:
         self.requester = UnsafeRequester(http, docId)
         self.docId = docId
         self.revisions = None
+        self.users = None
+        self.totalRevision = None
 
-    def listRevisions(self):
-        """
-        Get all the revisions for this document
-        :return: A new RevisionList containing all the revisions for this document.
-        """
-        if not self.revisions:
-            content = self.requester.requestList()
-            self.revisions = RevisionList(content, self.requester)
+    def _loadRevisions(self, data):
+        self.revisions = []
+        for revision in data['tileInfo']:
+            self.revisions.append(RevisionMetadata(revision, self.requester))
+
+    def _loadUsers(self, data):
+        self.users = {}
+        for userNumber in data['userMap']:
+            userData = User(userNumber, data['userMap'][userNumber])
+            self.users[userData.getId()] = userData
+
+    def getRevisionList(self):
+        if self.revisions is None or self.users is None:
+            rawData = self.requester.requestList()
+            self._loadRevisions(rawData)
+            self._loadUsers(rawData)
         return self.revisions
 
 
@@ -309,10 +281,8 @@ def main():
     document = Document(http, "1DN4LxL8nSd9ZUbqhpXIfasmm8PQykJonOw7nUpKXpoo")
 
     # Get the total revision data
-    (startId, endId) = document.listRevisions().getRevisionRange()
-    totalRevision = document.listRevisions().getForRange(startId, endId)
 
-    print(f"There were {len(totalRevision.users)}")
+    print(f"Revisions: {document.getRevisionList()}")
 
     # print(f"There are {len(revisions)} revisions in this document")
     # for revision in revisions:
