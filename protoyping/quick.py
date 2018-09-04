@@ -151,6 +151,39 @@ class ChangeData:
         """
         return self.editors.keys()
 
+    def userAdditions(self, user):
+        """
+        :param user: The user to look up
+        :return: The number of additions by that user
+        :raise KeyError: If the user did not edit the revision
+        """
+        if user in self.editors:
+            return self.editors[user].additions
+        else:
+            raise KeyError(f"User {user} did not edit this revision")
+
+    def userRemovals(self, user):
+        """
+        :param user: The user to look up
+        :return: The number of removals by that user
+        :raise KeyError: If the user did not edit the revision
+        """
+        if user in self.editors:
+            return self.editors[user].removals
+        else:
+            raise KeyError(f"User {user} did not edit this revision")
+
+    def userChanges(self, user):
+        """
+        :param user: The user to look up
+        :return: The number of changes by that user
+        :raise KeyError: If the user did not edit the revision
+        """
+        if user in self.editors:
+            return self.editors[user].changes
+        else:
+            raise KeyError(f"User {user} did not edit this revision")
+
 
 class RevisionMetadata:
     """
@@ -373,15 +406,15 @@ def main():
     # doc = Document(http, "13zenM2HX9WDJr1tt2YxGZ3RPYhk5ktc_tcEG_ess--Q") # Mayoral Char SHeet
     doc = Document(http, "17kB9r4NG2akVqVE6-FmLP9xT6mKhoI5AKPkO4dhRAxo")  # FIT2101 Project Plan
 
-    revisionList = doc.getRevisionList()
-    # Get the total revision data
+    totalChanges = doc.getTotalChanges()
+    print(f"In total there were {totalChanges.totalAdditions()} characters added"
+          f" and {totalChanges.totalRemovals()} removed"
+          f" by {len(totalChanges.getUsers())} users")
+    totalSize = totalChanges.totalAdditions() + totalChanges.totalRemovals()
 
-    print(f"There are {len(revisionList)} total major/named revisions")
-    for revision in revisionList:
-        changes = revision.getChanges()
-        print(f"\t{revision} had {changes.totalAdditions()} chars added"
-              f" and {changes.totalRemovals()} removed"
-              f" in {changes.totalChanges()} changes\n\n")
+    for user in totalChanges.getUsers():
+        userSize = totalChanges.userAdditions(user) + totalChanges.userRemovals(user)
+        print(f"{user} made {(userSize/totalSize)*100}% of changes.")
 
 
 if __name__ == '__main__':
