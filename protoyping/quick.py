@@ -113,6 +113,20 @@ class ChangeData:
                 else:
                     self.editors['unknown'].mergeIn(users[user])
 
+    def mergeIn(self, other):
+        """
+        Merges the changes in another revision into this revision.
+
+        :param other: The other revision to merge in
+        :return: None
+        """
+        self.total.mergeIn(other.total)
+        for user in other.getUsers():
+            if user in self.editors:
+                self.editors[user].mergeIn(other.editors[user])
+            else:
+                self.editors[user] = other.editors[user]
+
     def totalAdditions(self):
         """
         :return: The total number of characters added in this revision
@@ -331,13 +345,15 @@ class Document:
     def getTotalChanges(self):
         """
         Get an object representing the entirety of the changes made in this document.
+        This is all the individual changes made.
 
         :return: A ChangeData for all the changes made
         """
         if self.totalChanges is None:
-            idRange = self.getIdRange()
-            rawData = self.requester.requestRevisionRange(*idRange)
-            self.totalChanges = ChangeData(rawData)
+            revisionList = self.getRevisionList()
+            self.totalChanges = revisionList[0].getChanges()
+            for revision in revisionList[1:]:
+                self.totalChanges.mergeIn(revision.getChanges())
 
         return self.totalChanges
 
