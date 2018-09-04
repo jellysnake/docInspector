@@ -303,6 +303,9 @@ class User:
     def getId(self):
         return self.color
 
+    def __repr__(self):
+        return f"{self.name}({self.getId()})"
+
 
 class Document:
     """
@@ -390,6 +393,23 @@ class Document:
 
         return self.totalChanges
 
+    def getUser(self, user):
+        """
+        Gets information about a specific user
+        :param user: The user to get
+        :return: A User for that user
+        :raise KeyError: If the user could not be found
+        """
+        if self.users is None:
+            if self.revisions is None or self.users is None:
+                rawData = self.requester.requestList()
+                self._loadRevisions(rawData)
+                self._loadUsers(rawData)
+        if user in self.users:
+            return self.users[user]
+        else:
+            raise KeyError(f"User {user} did not edit the document")
+
 
 def main():
     # Basic authentication
@@ -414,7 +434,7 @@ def main():
 
     for user in totalChanges.getUsers():
         userSize = totalChanges.userAdditions(user) + totalChanges.userRemovals(user)
-        print(f"{user} made {(userSize/totalSize)*100}% of changes.")
+        print(f"{doc.getUser(user) if user != 'unknown' else 'unknown'} made {(userSize/totalSize)*100}% of changes.")
 
 
 if __name__ == '__main__':
