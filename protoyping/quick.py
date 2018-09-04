@@ -17,6 +17,7 @@ class ChangeData:
 
         Used & exposed by methods in the outer Change Data class
         """
+
         def __init__(self):
             """
             Inits the class with all counters set to and a None id.
@@ -107,41 +108,39 @@ class ChangeData:
                 else:
                     self.editors['unknown'].mergeIn(users[user])
 
+
 class RevisionMetadata:
     """
     A single revision.
-    It is comprised of multiple changes, and in turn there are multiple of these in a document
+    This is the metadata for the revision. The actual revision data is contained with the ChangeData instance
     """
 
     def __init__(self, data, requester):
         """
-        Builds a new requester out of the given data.
-        This data can either be an entry from the revision list, or the detailed revision data.
+        Inits the class from the given data.
+        This should be the raw JSON data returned from the call to get the list of revisions.
 
         :param data: The raw JSON data
         :param requester: The requester with which to make future calls.
         """
-        self.changes = None
+        self.change = None
         self.requester = requester
-        if 'chunkedSnapshot' in data:
-            self.getChanges(data)
-        else:
-            self.startId = data['start']
-            self.endId = data['end']
-            self.endTime = data['endMillis']
-            self.users = data['users']
-            self.name = data['name'] if 'name' in data else "unnamed"
-            self.revisionKey = data['revisionMac']
-            self.hasSubRevisions = data['expandable']
+
+        self.name = data['name'] if 'name' in data else "unnamed"
+        self.startId = data['start']
+        self.endId = data['end']
+        self.endTime = data['endMillis']
+        self.users = data['users']
+        self.revisionKey = data['revisionMac']
+        self.hasSubRevisions = data['expandable']
 
     def __str__(self):
         """
-
         :return: This revision as a string format
         """
         return f"'{self.name}' revision @ {datetime.fromtimestamp(1347517370).strftime('%c')}"
 
-    def getChanges(self, data):
+    def getChanges(self):
         """
         Get the changes made in this revision.
         This method caches the changes after the first call.
@@ -149,17 +148,11 @@ class RevisionMetadata:
         :param data: The data to use to load the changes from, Optional
         :return: The changes made in this revision
         """
-        if not self.changes:
-            self.changes = []
-            data = data or self.requester.requestRevision(self)
-            for chunk in data['chunkedSnapshot']:
-                for entry in chunk:
-                    if entry['ty'] == 'as' and entry['st'] == "revision_diff":
-                        self.changes.append(ChangeData(entry))
+        if not self.change:
+            rawData = self.requester.requestRevision(self)
+            self.change = ChangeData(rawData)
 
-            self.changes = [change for change in self.changes if change.isValid()]
-
-        return self.changes
+        return self.change
 
 
 class UnsafeRequester:
