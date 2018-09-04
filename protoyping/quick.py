@@ -31,23 +31,26 @@ class RevisionData:
     """
 
     def __init__(self, data, requester):
-        self.startId = data['start']
-        self.endId = data['end']
-        self.endTime = data['endMillis']
-        self.users = data['users']
-        self.name = data['name'] if 'name' in data else "unnamed"
-        self.revisionKey = data['revisionMac']
-        self.hasSubRevisions = data['expandable']
         self.changes = None
         self.requester = requester
+        if 'chunkedSnapshot' in data:
+            self.getChanges(data)
+        else:
+            self.startId = data['start']
+            self.endId = data['end']
+            self.endTime = data['endMillis']
+            self.users = data['users']
+            self.name = data['name'] if 'name' in data else "unnamed"
+            self.revisionKey = data['revisionMac']
+            self.hasSubRevisions = data['expandable']
 
     def __str__(self):
         return f"'{self.name}' revision @ {datetime.fromtimestamp(1347517370).strftime('%c')}"
 
-    def getChanges(self):
+    def getChanges(self, data):
         if not self.changes:
             self.changes = []
-            data = self.requester.requestRevision(self)
+            data = data or self.requester.requestRevision(self)
             for chunk in data['chunkedSnapshot']:
                 for entry in chunk:
                     if entry['ty'] == 'as' and entry['st'] == "revision_diff":
@@ -66,25 +69,24 @@ class UnsafeRequester:
     def __init__(self, http, docId):
         self.http = http
         self.docId = docId
+        self.baseUrl = f"https://docs.google.com/document/d/{self.docId}/"
 
     def requestRevision(self, revision):
-        (_, content) = self.http.request(
-            f"https://docs.google.com/document/d/{self.docId}/"
-            f"showrevision?id={self.docId}&"
-            f"end={revision.endId}&start={revision.startId}&"
-            f"smv=4&srfn=false&ern=false&"
-            f"includes_info_params=true")
-        return json.loads(content[5:])
+        return self.requestRevisionRange(revision.startId, revision.endId)
 
     def requestRevisionRange(self, startId, endId):
-
+        (_, content) = self.http.request(
+            self.baseUrl +
+            f"showrevision?id={self.docId}&"
+            f"end={endId}&start={startId}")
+        return json.loads(content[5:])
 
     def requestList(self):
-        (_, content) = self.http.request(f"https://docs.google.com/document/d/{self.docId}/revisions/"
-                                         f"tiles?id={self.docId}&"
+        (_, content) = self.http.request(self.baseUrl +
+                                         f"revisions/tiles?id={self.docId}&"
                                          f"start=1&"
-                                         f"showDetailedRevisions=false&filterNamed=false&"
-                                         f"ouid=107477822689043550957&includes_info_params=true")
+                                         f"showDetailedRevisions=false&filterNamed=false")
+
         return json.loads(content[5:])
 
 
@@ -118,6 +120,11 @@ class RevisionList(list):
     def getRevisionRange(self):
         return self[0].startId, self[-1].endId
 
+    def getForRange(self, startId, endId):
+        data = self.requester.requestRevisionRange(startId, endId)
+        return RevisionData(data, requester=self.requester)
+
+
 class Document:
     """
     Represents a single document.
@@ -148,7 +155,9 @@ def main():
 
     (startId, endId) = document.listRevisions().getRevisionRange()
 
-    print(document.listRevisions().getForRange(startId, endId))
+    totalRevision = document.listRevisions().getForRange(startId, endId)
+
+    print(f"There were {len(totalRevision.users)}")
 
     # print(f"There are {len(revisions)} revisions in this document")
     # for revision in revisions:
