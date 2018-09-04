@@ -134,7 +134,7 @@ class RevisionMetadata:
         self.revisionKey = data['revisionMac']
         self.hasSubRevisions = data['expandable']
 
-    def __str__(self):
+    def __repr__(self):
         """
         :return: This revision as a string format
         """
@@ -145,7 +145,6 @@ class RevisionMetadata:
         Get the changes made in this revision.
         This method caches the changes after the first call.
 
-        :param data: The data to use to load the changes from, Optional
         :return: The changes made in this revision
         """
         if not self.change:
@@ -249,17 +248,39 @@ class Document:
         self.totalRevision = None
 
     def _loadRevisions(self, data):
+        """
+        Internal Function.
+        Loads the revisions from the revision data provided.
+
+        :param data: The data to load from
+        :return: None
+        """
         self.revisions = []
         for revision in data['tileInfo']:
             self.revisions.append(RevisionMetadata(revision, self.requester))
 
     def _loadUsers(self, data):
+        """
+        Internal Function
+        Loads the users from the data provided.
+
+        :param data: The data to load from
+        :return: None
+        """
         self.users = {}
         for userNumber in data['userMap']:
             userData = User(userNumber, data['userMap'][userNumber])
             self.users[userData.getId()] = userData
 
     def getRevisionList(self):
+        """
+        Returns a List of all 'major' revisions
+        A major revision is one which is either:
+            both expandable and unexpanded,
+            or named.
+
+        :return: A list of all major revisions
+        """
         if self.revisions is None or self.users is None:
             rawData = self.requester.requestList()
             self._loadRevisions(rawData)
@@ -283,23 +304,6 @@ def main():
     # Get the total revision data
 
     print(f"Revisions: {document.getRevisionList()}")
-
-    # print(f"There are {len(revisions)} revisions in this document")
-    # for revision in revisions:
-    #     print(f"\t{str(revision)}:")
-    #     users = {}
-    #     changes = revision.getChanges()
-    #     for change in changes:
-    #         if change.user not in users:
-    #             users[change.user] = [change.user, 0, 0, 0]
-    #         users[change.user][1] += 1
-    #         if change.editType == 1:
-    #             users[change.user][2] += change.getSize()
-    #         elif change.editType == 2:
-    #             users[change.user][3] += change.getSize()
-    #     print(f"\t\tThere were {len(users)} users:")
-    #     for editor in users.values():
-    #         print(f"\t\t{editor[0]} made {editor[1]} edits, totaling {editor[2]} additions and {editor[3]} deletions")
 
 
 if __name__ == '__main__':
