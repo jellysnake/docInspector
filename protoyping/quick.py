@@ -36,15 +36,18 @@ class ChangeData:
             :return: None
             :raise Exception: If the change type is invalid.
             """
-            size = data['ei'] - data['si']
+            size = data['ei'] - data['si'] + 1
             if size != 0:
-                editType = data['sm']['revdiff_dt'] if 'revdiff_dt' in data['sm'] else -1
+                editType = data['sm']['revdiff_dt'] if 'revdiff_dt' in data['sm'] else None
                 if editType == 1:
                     self.additions += size
                 elif editType == 2:
                     self.removals += size
+                elif editType is None:
+                    self.additions += size
+                    print(f"Edit of size {size} had no edit type. Defaulting to addition")
                 else:
-                    raise Exception(f"Unknown change type '{editType}'")
+                    print(f"ERROR: Ghost edit of size {size} found?")
 
         def hasUser(self):
             """
@@ -88,11 +91,11 @@ class ChangeData:
         users = {}
         self.total = self.EditorChanges()
         for entry in self.changes:
-            user = entry['sm']['revdiff_aid'] if "revdiff_aid" in data['sm'] else ""
+            user = entry['sm']['revdiff_aid'] if "revdiff_aid" in entry['sm'] else ""
             if user not in users:
                 users[user] = self.EditorChanges()
-            users[user].addChange(data)
-            self.total.addChange(data)
+            users[user].addChange(entry)
+            self.total.addChange(entry)
 
         self.editors = {}
         # Update the user Id to the standard
@@ -107,6 +110,12 @@ class ChangeData:
                     self.editors["unknown"].setUserId("unknown")
                 else:
                     self.editors['unknown'].mergeIn(users[user])
+
+    def totalAdditions(self):
+        return self.total.additions
+
+    def totalRemovals(self):
+        return self.total.removals
 
 
 class RevisionMetadata:
@@ -324,16 +333,17 @@ def main():
     http = creds.authorize(Http())
 
     # Create the main document object
-    doc = Document(http, "1DN4LxL8nSd9ZUbqhpXIfasmm8PQykJonOw7nUpKXpoo")
+    # doc = Document(http, "1DN4LxL8nSd9ZUbqhpXIfasmm8PQykJonOw7nUpKXpoo") # Terasology Plan
+    # doc = Document(http, "13zenM2HX9WDJr1tt2YxGZ3RPYhk5ktc_tcEG_ess--Q") # Mayoral Char SHeet
+    doc = Document(http, "17kB9r4NG2akVqVE6-FmLP9xT6mKhoI5AKPkO4dhRAxo")  # FIT2101 Project Plan
 
-    totalChanges = doc.getTotalChanges()
+    revisionList = doc.getRevisionList()
     # Get the total revision data
 
-
-    print(f"There are {len(doc.getRevisionList())} total major/named revisions."
-          f"")
-
-
+    print(f"There are {len(revisionList)} total major/named revisions")
+    for revision in revisionList:
+        changes = revision.getChanges()
+        print(f"\t{revision} had {changes.totalAdditions()} chars added and {changes.totalRemovals()} removed\n\n")
 
 
 if __name__ == '__main__':
