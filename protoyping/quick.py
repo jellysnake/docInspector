@@ -90,10 +90,13 @@ class RevisionList(list):
         for revision in data['tileInfo']:
             revisions.append(RevisionData(revision, self.requester))
         super().__init__(revisions)
+        self.sort(key=lambda x: x.startId)
 
     def __str__(self):
         return f"[{', '.join([str(revision) for revision in self])}]"
 
+    def getRevisionRange(self):
+        return self[0].startId, self[-1].endId
 
 class Document:
     def __init__(self, http, docId):
@@ -118,23 +121,26 @@ def main():
     http = creds.authorize(Http())
     document = Document(http, "1DN4LxL8nSd9ZUbqhpXIfasmm8PQykJonOw7nUpKXpoo")
 
-    revisions = document.listRevisions()
-    print(f"There are {len(revisions)} revisions in this document")
-    for revision in revisions:
-        print(f"\t{str(revision)}:")
-        editors = {}
-        changes = revision.getChanges()
-        for change in changes:
-            if change.user not in editors:
-                editors[change.user] = [change.user, 0, 0, 0]
-            editors[change.user][1] += 1
-            if change.editType == 1:
-                editors[change.user][2] += change.getSize()
-            elif change.editType == 2:
-                editors[change.user][3] += change.getSize()
-        print(f"\t\tThere were {len(editors)} editors:")
-        for editor in editors.values():
-            print(f"\t\t{editor[0]} made {editor[1]} edits, totaling {editor[2]} additions and {editor[3]} deletions")
+    (startId, endId) = document.listRevisions().getRevisionRange()
+
+    print(document.listRevisions().getForRange(startId, endId))
+
+    # print(f"There are {len(revisions)} revisions in this document")
+    # for revision in revisions:
+    #     print(f"\t{str(revision)}:")
+    #     editors = {}
+    #     changes = revision.getChanges()
+    #     for change in changes:
+    #         if change.user not in editors:
+    #             editors[change.user] = [change.user, 0, 0, 0]
+    #         editors[change.user][1] += 1
+    #         if change.editType == 1:
+    #             editors[change.user][2] += change.getSize()
+    #         elif change.editType == 2:
+    #             editors[change.user][3] += change.getSize()
+    #     print(f"\t\tThere were {len(editors)} editors:")
+    #     for editor in editors.values():
+    #         print(f"\t\t{editor[0]} made {editor[1]} edits, totaling {editor[2]} additions and {editor[3]} deletions")
 
 
 if __name__ == '__main__':
