@@ -11,13 +11,30 @@ class ChangeData:
     """
 
     class EditorChanges:
+        """
+        Class that stores the changes made by a single editor
+        This is a nested class as it should not be publicly visible information.
+
+        Used & exposed by methods in the outer Change Data class
+        """
         def __init__(self):
+            """
+            Inits the class with all counters set to and a None id.
+            """
             self.additions = 0
             self.changes = 0
             self.removals = 0
             self.userId = None
 
         def addChange(self, data):
+            """
+            Load the raw change data into this instance
+            This converts the data into additions/removals in a robust manner
+
+            :param data: The data to add. This should be in the raw JSON format
+            :return: None
+            :raise Exception: If the change type is invalid.
+            """
             size = data['ei'] - data['si']
             if size != 0:
                 editType = data['sm']['revdiff_dt'] if 'revdiff_dt' in data['sm'] else -1
@@ -29,17 +46,36 @@ class ChangeData:
                     raise Exception(f"Unknown change type '{editType}'")
 
         def hasUser(self):
+            """
+            :return: True if this class has an ID set or not.
+            """
             return self.userId is not None
 
         def setUserId(self, newId):
+            """
+            :param newId: The new user id to set for this instance
+            """
             self.userId = newId
 
         def mergeIn(self, other):
+            """
+            Merges the contents of another EditorChanges instance into this one
+            Retains the ID for this instance, even if it is None.
+
+            :param other: The other instance to merge into this one
+            :return: None
+            """
             self.additions += other.additions
             self.removals += other.removals
             self.changes += other.changes
 
     def __init__(self, data):
+        """
+        Inits the class with the given data.
+        This data should be in the raw JSON format returned by the web request
+
+        :param data: The data to load in
+        """
         # Pull the list of changes from the snapshot
         self.changes = []
         for chunk in data['chunkedSnapshot']:
