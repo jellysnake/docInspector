@@ -37,6 +37,7 @@ class ChangeData:
             :raise Exception: If the change type is invalid.
             """
             size = data['ei'] - data['si'] + 1
+            self.changes += 1
             if size != 0:
                 editType = data['sm']['revdiff_dt'] if 'revdiff_dt' in data['sm'] else None
                 if editType == 1:
@@ -48,6 +49,7 @@ class ChangeData:
                     print(f"Edit of size {size} had no edit type. Defaulting to addition")
                 else:
                     print(f"ERROR: Ghost edit of size {size} found?")
+                    self.changes -= 1  # Ensure it doesn't show up
 
         def hasUser(self):
             """
@@ -116,6 +118,12 @@ class ChangeData:
 
     def totalRemovals(self):
         return self.total.removals
+
+    def totalChanges(self):
+        """
+        :return: The total number of characters edits in this revision
+        """
+        return self.total.changes
 
 
 class RevisionMetadata:
@@ -343,7 +351,9 @@ def main():
     print(f"There are {len(revisionList)} total major/named revisions")
     for revision in revisionList:
         changes = revision.getChanges()
-        print(f"\t{revision} had {changes.totalAdditions()} chars added and {changes.totalRemovals()} removed\n\n")
+        print(f"\t{revision} had {changes.totalAdditions()} chars added"
+              f" and {changes.totalRemovals()} removed"
+              f" in {changes.totalChanges()} changes\n\n")
 
 
 if __name__ == '__main__':
