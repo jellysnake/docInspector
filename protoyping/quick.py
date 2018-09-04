@@ -11,6 +11,11 @@ class ChangeData:
     """
 
     def __init__(self, data):
+        """
+        Creates a new change.
+
+        :param data: The JSON data containing the change
+        """
         self.startChar = data['si']
         self.endChar = data['ei']
         self.editType = data['sm']['revdiff_dt']
@@ -18,9 +23,18 @@ class ChangeData:
         self.user = data['sm']['revdiff_aid'] if "revdiff_aid" in data['sm'] else "Anonymous"
 
     def isValid(self):
+        """
+        Checks if this is a valid change.
+        A change is valid if it has both an edit type and an editor
+
+        :return: True if the change is valid, False otherwise.
+        """
         return self.editType and self.user
 
     def getSize(self):
+        """
+        :return: the size, in characters, of this change.
+        """
         return self.endChar - self.startChar
 
 
@@ -31,6 +45,13 @@ class RevisionData:
     """
 
     def __init__(self, data, requester):
+        """
+        Builds a new requester out of the given data.
+        This data can either be an entry from the revision list, or the detailed revision data.
+
+        :param data: The raw JSON data
+        :param requester: The requester with which to make future calls.
+        """
         self.changes = None
         self.requester = requester
         if 'chunkedSnapshot' in data:
@@ -45,9 +66,20 @@ class RevisionData:
             self.hasSubRevisions = data['expandable']
 
     def __str__(self):
+        """
+
+        :return: This revision as a string format
+        """
         return f"'{self.name}' revision @ {datetime.fromtimestamp(1347517370).strftime('%c')}"
 
     def getChanges(self, data):
+        """
+        Get the changes made in this revision.
+        This method caches the changes after the first call.
+
+        :param data: The data to use to load the changes from, Optional
+        :return: The changes made in this revision
+        """
         if not self.changes:
             self.changes = []
             data = data or self.requester.requestRevision(self)
@@ -67,14 +99,32 @@ class UnsafeRequester:
     """
 
     def __init__(self, http, docId):
+        """
+
+        :param http: The http object to make the direct calls with
+        :param docId: The ID of the document to call against.
+        """
         self.http = http
         self.docId = docId
         self.baseUrl = f"https://docs.google.com/document/d/{self.docId}/"
 
     def requestRevision(self, revision):
+        """
+        Requests the detailed revision data for a revision
+
+        :param revision: The revision to request for
+        :return: The raw json of that revision
+        """
         return self.requestRevisionRange(revision.startId, revision.endId)
 
     def requestRevisionRange(self, startId, endId):
+        """
+        Requests the detailed revision data for a given revision range.
+
+        :param startId: The start id of the range
+        :param endId: The end id of the range
+        :return: The raw json for that range, as a single revision object.
+        """
         (_, content) = self.http.request(
             self.baseUrl +
             f"showrevision?id={self.docId}&"
@@ -82,6 +132,11 @@ class UnsafeRequester:
         return json.loads(content[5:])
 
     def requestList(self):
+        """
+        Request a list of all revisions on this document
+
+        :return: The raw json of the list of revisions
+        """
         (_, content) = self.http.request(self.baseUrl +
                                          f"revisions/tiles?id={self.docId}&"
                                          f"start=1&"
@@ -96,6 +151,12 @@ class User:
     """
 
     def __init__(self, userId, data):
+        """
+        Creates a new user from the raw data
+
+        :param userId: The ID of the user
+        :param data: The raw json data
+        """
         self.id = userId
         self.name = data['name']
         self.photo = data['photo']
@@ -105,6 +166,12 @@ class User:
 
 class RevisionList(list):
     def __init__(self, data, requester):
+        """
+        Builds a new revision list from the raw data
+
+        :param data: The raw data of the revision list
+        :param requester: The requester to make subsequent calls to the api with.
+        """
         self.startRevision = data['firstRev']
         revisions = []
         self.iterId = 0
@@ -115,12 +182,25 @@ class RevisionList(list):
         self.sort(key=lambda x: x.startId)
 
     def __str__(self):
+        """
+        :return: A string representation of all the revisions in this
+        """
         return f"[{', '.join([str(revision) for revision in self])}]"
 
     def getRevisionRange(self):
+        """
+        Get the start and end id of the revisions in this list
+        :return:
+        """
         return self[0].startId, self[-1].endId
 
     def getForRange(self, startId, endId):
+        """
+        Get a revision representing a specific range
+        :param startId: The start id of the range
+        :param endId: The end id of the range
+        :return: A revision for that range.
+        """
         data = self.requester.requestRevisionRange(startId, endId)
         return RevisionData(data, requester=self.requester)
 
@@ -132,11 +212,21 @@ class Document:
     """
 
     def __init__(self, http, docId):
+        """
+        Creates a new document with the given id.
+
+        :param http: The http object to make calls with
+        :param docId: The ID of the document in question
+        """
         self.requester = UnsafeRequester(http, docId)
         self.docId = docId
         self.revisions = None
 
     def listRevisions(self):
+        """
+        Get all the revisions for this document
+        :return: A new RevisionList containing all the revisions for this document.
+        """
         if not self.revisions:
             content = self.requester.requestList()
             self.revisions = RevisionList(content, self.requester)
@@ -144,17 +234,20 @@ class Document:
 
 
 def main():
+    # Basic authentication
+    # This will be replaced with more thorough code
     store = file.Storage('token.json')
     creds = store.get()
     if not creds or creds.invalid:
         flow = client.flow_from_clientsecrets('credentials.json', "https://www.googleapis.com/auth/drive")
         creds = tools.run_flow(flow, store)
-
     http = creds.authorize(Http())
+
+    # Create the main document object
     document = Document(http, "1DN4LxL8nSd9ZUbqhpXIfasmm8PQykJonOw7nUpKXpoo")
 
+    # Get the total revision data
     (startId, endId) = document.listRevisions().getRevisionRange()
-
     totalRevision = document.listRevisions().getForRange(startId, endId)
 
     print(f"There were {len(totalRevision.users)}")
