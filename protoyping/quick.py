@@ -245,7 +245,7 @@ class Document:
         self.docId = docId
         self.revisions = None
         self.users = None
-        self.totalRevision = None
+        self.totalChanges = None
 
     def _loadRevisions(self, data):
         """
@@ -258,6 +258,7 @@ class Document:
         self.revisions = []
         for revision in data['tileInfo']:
             self.revisions.append(RevisionMetadata(revision, self.requester))
+        self.revisions.sort(key=lambda x: x.startId)
 
     def _loadUsers(self, data):
         """
@@ -287,6 +288,30 @@ class Document:
             self._loadUsers(rawData)
         return self.revisions
 
+    def getIdRange(self):
+        """
+        Get the range of revision ids in this document.
+        This is defined as the start id of the first revision and the end id of the last revision.
+        Revisions are sorted by start id, so if there is an overlap the last id may not be the true last revision.
+
+        :return: A tuple where the first element is the first id and the second is the last
+        """
+        revisions = self.getRevisionList()
+        return revisions[0].startId, revisions[-1].endId
+
+    def getTotalChanges(self):
+        """
+        Get an object representing the entirety of the changes made in this document.
+
+        :return: A ChangeData for all the changes made
+        """
+        if self.totalChanges is None:
+            idRange = self.getIdRange()
+            rawData = self.requester.requestRevisionRange(*idRange)
+            self.totalChanges = ChangeData(rawData)
+
+        return self.totalChanges
+
 
 def main():
     # Basic authentication
@@ -299,11 +324,16 @@ def main():
     http = creds.authorize(Http())
 
     # Create the main document object
-    document = Document(http, "1DN4LxL8nSd9ZUbqhpXIfasmm8PQykJonOw7nUpKXpoo")
+    doc = Document(http, "1DN4LxL8nSd9ZUbqhpXIfasmm8PQykJonOw7nUpKXpoo")
 
+    totalChanges = doc.getTotalChanges()
     # Get the total revision data
 
-    print(f"Revisions: {document.getRevisionList()}")
+
+    print(f"There are {len(doc.getRevisionList())} total major/named revisions."
+          f"")
+
+
 
 
 if __name__ == '__main__':
