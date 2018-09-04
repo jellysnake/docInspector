@@ -7,38 +7,71 @@ from oauth2client import file, client, tools
 
 class ChangeData:
     """
-    Represents a single change made in a revision. Multiple of these make up a revision.
+    Represents the collated changes made in a revision
     """
 
+    class EditorChanges:
+        def __init__(self):
+            self.additions = 0
+            self.changes = 0
+            self.removals = 0
+            self.userId = None
+
+        def addChange(self, data):
+            size = data['ei'] - data['si']
+            if size != 0:
+                editType = data['sm']['revdiff_dt'] if 'revdiff_dt' in data['sm'] else -1
+                if editType == 1:
+                    self.additions += size
+                elif editType == 2:
+                    self.removals += size
+                else:
+                    raise Exception(f"Unknown change type '{editType}'")
+
+        def hasUser(self):
+            return self.userId is not None
+
+        def setUserId(self, newId):
+            self.userId = newId
+
+        def mergeIn(self, other):
+            self.additions += other.additions
+            self.removals += other.removals
+            self.changes += other.changes
+
     def __init__(self, data):
-        """
-        Creates a new change.
+        # Pull the list of changes from the snapshot
+        self.changes = []
+        for chunk in data['chunkedSnapshot']:
+            for entry in chunk:
+                if entry['ty'] == 'as' and entry['st'] == "revision_diff":
+                    self.changes.append(entry)
 
-        :param data: The JSON data containing the change
-        """
-        self.startChar = data['si']
-        self.endChar = data['ei']
-        self.editType = data['sm']['revdiff_dt']
-        self.editType = data['sm']['revdiff_dt'] if "revdiff_dt" in data['sm'] else None
-        self.user = data['sm']['revdiff_aid'] if "revdiff_aid" in data['sm'] else "Anonymous"
+        # Load the changes into both the running total and the user totals
+        users = {}
+        self.total = self.EditorChanges()
+        for entry in self.changes:
+            user = entry['sm']['revdiff_aid'] if "revdiff_aid" in data['sm'] else ""
+            if user not in users:
+                users[user] = self.EditorChanges()
+            users[user].addChange(data)
+            self.total.addChange(data)
 
-    def isValid(self):
-        """
-        Checks if this is a valid change.
-        A change is valid if it has both an edit type and an editor
+        self.editors = {}
+        # Update the user Id to the standard
+        for user in users:
+            if user in data['userInfo']:  # We have userdata, so we copy the user into the store
+                newId = data['userInfo'][user]['color']
+                self.editors[newId] = users[user]
+                self.editors[newId].setUserId(newId)
+            else:  # We don't have data, so we merge into the unknown case
+                if 'unknown' not in self.editors:
+                    self.editors['unknown'] = users[user]
+                    self.editors["unknown"].setUserId("unknown")
+                else:
+                    self.editors['unknown'].mergeIn(users[user])
 
-        :return: True if the change is valid, False otherwise.
-        """
-        return self.editType and self.user
-
-    def getSize(self):
-        """
-        :return: the size, in characters, of this change.
-        """
-        return self.endChar - self.startChar
-
-
-class RevisionData:
+class RevisionMetadata:
     """
     A single revision.
     It is comprised of multiple changes, and in turn there are multiple of these in a document
@@ -177,7 +210,7 @@ class RevisionList(list):
         self.iterId = 0
         self.requester = requester
         for revision in data['tileInfo']:
-            revisions.append(RevisionData(revision, self.requester))
+            revisions.append(RevisionMetadata(revision, self.requester))
         super().__init__(revisions)
         self.sort(key=lambda x: x.startId)
 
@@ -202,7 +235,7 @@ class RevisionList(list):
         :return: A revision for that range.
         """
         data = self.requester.requestRevisionRange(startId, endId)
-        return RevisionData(data, requester=self.requester)
+        return RevisionMetadata(data, requester=self.requester)
 
 
 class Document:
@@ -255,18 +288,18 @@ def main():
     # print(f"There are {len(revisions)} revisions in this document")
     # for revision in revisions:
     #     print(f"\t{str(revision)}:")
-    #     editors = {}
+    #     users = {}
     #     changes = revision.getChanges()
     #     for change in changes:
-    #         if change.user not in editors:
-    #             editors[change.user] = [change.user, 0, 0, 0]
-    #         editors[change.user][1] += 1
+    #         if change.user not in users:
+    #             users[change.user] = [change.user, 0, 0, 0]
+    #         users[change.user][1] += 1
     #         if change.editType == 1:
-    #             editors[change.user][2] += change.getSize()
+    #             users[change.user][2] += change.getSize()
     #         elif change.editType == 2:
-    #             editors[change.user][3] += change.getSize()
-    #     print(f"\t\tThere were {len(editors)} editors:")
-    #     for editor in editors.values():
+    #             users[change.user][3] += change.getSize()
+    #     print(f"\t\tThere were {len(users)} users:")
+    #     for editor in users.values():
     #         print(f"\t\t{editor[0]} made {editor[1]} edits, totaling {editor[2]} additions and {editor[3]} deletions")
 
 
