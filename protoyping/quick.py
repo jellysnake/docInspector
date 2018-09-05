@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+from typing import List
 
 from httplib2 import Http
 from oauth2client import file, client, tools
@@ -51,7 +52,7 @@ class ChangeData:
                     print(f"ERROR: Ghost edit of size {size} found?")
                     self.changes -= 1  # Ensure it doesn't show up
 
-        def hasUser(self):
+        def hasUser(self) -> bool:
             """
             :return: True if this class has an ID set or not.
             """
@@ -75,31 +76,35 @@ class ChangeData:
             self.removals += other.removals
             self.changes += other.changes
 
-    def __init__(self, data):
+    def __init__(self, data=None):
+        self.editors = {}
+        self.total = self.EditorChanges()
+        if data:
+            self.initFromData(data)
+
+    def initFromData(self, data):
         """
         Inits the class with the given data.
         This data should be in the raw JSON format returned by the web request
 
         :param data: The data to load in
         """
+        changes = []
         # Pull the list of changes from the snapshot
-        self.changes = []
         for chunk in data['chunkedSnapshot']:
             for entry in chunk:
                 if entry['ty'] == 'as' and entry['st'] == "revision_diff":
-                    self.changes.append(entry)
+                    changes.append(entry)
 
         # Load the changes into both the running total and the user totals
         users = {}
-        self.total = self.EditorChanges()
-        for entry in self.changes:
+        for entry in changes:
             user = entry['sm']['revdiff_aid'] if "revdiff_aid" in entry['sm'] else ""
             if user not in users:
                 users[user] = self.EditorChanges()
             users[user].addChange(entry)
-            self.total.addChange(entry)
+            self.total.mergeIn(users[user])
 
-        self.editors = {}
         # Update the user Id to the standard
         for user in users:
             if user in data['userInfo']:  # We have userdata, so we copy the user into the store
@@ -113,7 +118,7 @@ class ChangeData:
                 else:
                     self.editors['unknown'].mergeIn(users[user])
 
-    def mergeIn(self, other):
+    def mergeIn(self, other: 'ChangeData'):
         """
         Merges the changes in another revision into this revision.
 
@@ -127,31 +132,31 @@ class ChangeData:
             else:
                 self.editors[user] = other.editors[user]
 
-    def totalAdditions(self):
+    def totalAdditions(self) -> int:
         """
         :return: The total number of characters added in this revision
         """
         return self.total.additions
 
-    def totalRemovals(self):
+    def totalRemovals(self) -> int:
         """
         :return: The total number of characters removed in this revision
         """
         return self.total.removals
 
-    def totalChanges(self):
+    def totalChanges(self) -> int:
         """
         :return: The total number of characters edits in this revision
         """
         return self.total.changes
 
-    def getUsers(self):
+    def getUsers(self) -> list:
         """
         :return: all the users that have edited this revision
         """
-        return self.editors.keys()
+        return list(self.editors.keys())
 
-    def userAdditions(self, user):
+    def userAdditions(self, user) -> int:
         """
         :param user: The user to look up
         :return: The number of additions by that user
@@ -162,7 +167,7 @@ class ChangeData:
         else:
             raise KeyError(f"User {user} did not edit this revision")
 
-    def userRemovals(self, user):
+    def userRemovals(self, user) -> int:
         """
         :param user: The user to look up
         :return: The number of removals by that user
@@ -173,7 +178,7 @@ class ChangeData:
         else:
             raise KeyError(f"User {user} did not edit this revision")
 
-    def userChanges(self, user):
+    def userChanges(self, user) -> int:
         """
         :param user: The user to look up
         :return: The number of changes by that user
@@ -216,7 +221,7 @@ class RevisionMetadata:
         """
         return f"'{self.name}' revision @ {datetime.fromtimestamp(1347517370).strftime('%c')}"
 
-    def getChanges(self):
+    def getChanges(self) -> ChangeData:
         """
         Get the changes made in this revision.
         This method caches the changes after the first call.
@@ -352,7 +357,7 @@ class Document:
             userData = User(userNumber, data['userMap'][userNumber])
             self.users[userData.getId()] = userData
 
-    def getRevisionList(self):
+    def getRevisionList(self) -> List[RevisionMetadata]:
         """
         Returns a List of all 'major' revisions
         A major revision is one which is either:
@@ -367,7 +372,7 @@ class Document:
             self._loadUsers(rawData)
         return self.revisions
 
-    def getIdRange(self):
+    def getIdRange(self) -> tuple:
         """
         Get the range of revision ids in this document.
         This is defined as the start id of the first revision and the end id of the last revision.
@@ -378,7 +383,7 @@ class Document:
         revisions = self.getRevisionList()
         return revisions[0].startId, revisions[-1].endId
 
-    def getTotalChanges(self):
+    def getTotalChanges(self) -> ChangeData:
         """
         Get an object representing the entirety of the changes made in this document.
         This is all the individual changes made.
@@ -393,7 +398,7 @@ class Document:
 
         return self.totalChanges
 
-    def getUser(self, user):
+    def getUser(self, user) -> User:
         """
         Gets information about a specific user
         :param user: The user to get
@@ -409,6 +414,26 @@ class Document:
             return self.users[user]
         else:
             raise KeyError(f"User {user} did not edit the document")
+
+    def getForIdRange(self, startId, endId) -> ChangeData:
+        """
+        Get all the changes made in a given id range.
+        This is an aggregate of all the changes made
+
+        All revisions with a start >= to startId and an end <= endId will be included.
+        This means that a revision may not be included if one of the two falls just outside the range.
+        It also means that the endpoints may not be included if there is no revision that exactly matches them.
+
+        :param startId: The starting id
+        :param endId: The ending id
+        :return: An aggregate of all the changes in that id range
+        """
+        revisions = self.getRevisionList()
+        changes = ChangeData()
+        for i in range(len(revisions)):
+            if revisions[i].startId >= startId and revisions[i].endId <= endId:
+                changes.mergeIn(revisions[i].getChanges())
+        return changes
 
 
 def main():
