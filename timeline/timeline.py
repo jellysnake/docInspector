@@ -6,10 +6,13 @@ from oauth2client import file, client, tools
 # If modifying these scopes, delete the file token.json
 SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly'
 
+''' 
+Prints timeline of given doc to the console
+:parameter rev_meta : revision metadata from google docs API
+'''
 def create_timeline(rev_meta):
     revisions = rev_meta.get('items', [])
     for revision in revisions:
-        # print('\t' + revision['modifiedDate'] + " - " + revision['lastModifyingUserName'])
         print('\t {0}/{1}/{2} {3} - {4}'.format(revision['modifiedDate'][8:10], revision['modifiedDate'][5:7],
             revision['modifiedDate'][2:4], revision['modifiedDate'][11:16], revision['lastModifyingUserName']))
 
