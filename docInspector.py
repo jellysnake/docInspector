@@ -17,10 +17,10 @@ def parseArguments():
                         help='The document id to scrape')
 
     parser.add_argument('-d, --dates', dest='dates', action='store', required=False,
-                        help='The start and date to load from. Format of "dd-mm-yyyy/"dd-mm-yyyy"')
+                        help='The start and date to load from. Format of "dd-mm-yyyy/dd-mm-yyyy"')
 
-    parser.add_argument('-t, --time', dest='timeIncrement', type=str, default='01:00:00',
-                        required=False, help="The time increment to display changes in.")
+    parser.add_argument('-t, --time', dest='timeIncrement', type=str, default='1:0:0',
+                        required=False, help="The time increment to display changes in. Format of 'd:h:m'")
 
     parser.add_argument('-u, --unsafe', dest='isUnsafe', action='store_true', default=False,
                         required=False, help='Use the unsafe API to gain more data')
@@ -54,6 +54,21 @@ def getTotalChanges(document):
             print("%s made %2.2f%% of all changes" % (document.getUser(user).name, (userSize / totalSize) * 100))
 
 
+def getIncrementData(doc: Document, increment):
+    days, hours, mins = map(int, increment.split(':'))
+    millis = (((days * 24) + hours) * 60 + mins) * 60 * 1000
+    changes = doc.getChangesInIncrement(millis)
+    i = 0
+    print("Changes per student per increment:")
+    for change in changes:
+        print(f"{i}'th increment")
+        for user in change.getUsers():
+            print(f"\t{doc.getUser(user)} added {change.userAdditions(user)} chars, "
+                  f"and removed {change.userRemovals(user)} "
+                  f"in {change.userChanges(user)} edits")
+        print("")
+
+
 if __name__ == '__main__':
     args = parseArguments()
     service, http = authenticate('https://www.googleapis.com/auth/drive'
@@ -80,3 +95,4 @@ if __name__ == '__main__':
     if args.isUnsafe:
         doc = Document(http, args.fileId, args.useFine)
         getTotalChanges(doc)
+        getIncrementData(doc, args.timeIncrement)
