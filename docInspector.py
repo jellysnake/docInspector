@@ -4,6 +4,8 @@ from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
 
+from DocumentEditors import findAndPrintEditors
+from ModifyDateRange import getDatesModifiedWithin
 from timeline import create_timeline
 
 
@@ -50,3 +52,10 @@ if __name__ == '__main__':
     # Print timeline code
     rev_meta = service.revisions().list(fileId=args.fileId).execute()
     create_timeline(rev_meta)
+
+    if args.dates:
+        # Print Modified dates
+        getDatesModifiedWithin(args.dates, rev_meta)
+
+    # Print Document Editors
+    findAndPrintEditors(rev_meta)
