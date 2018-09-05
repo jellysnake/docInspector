@@ -1,2 +1,6 @@
 .idea/
 *.iml
+<<<<<<< HEAD
+=======
+token.json
+>>>>>>> addGitignore
