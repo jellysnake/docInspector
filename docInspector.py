@@ -6,6 +6,7 @@ from oauth2client import file, client, tools
 
 from DocumentEditors import findAndPrintEditors
 from ModifyDateRange import getDatesModifiedWithin
+from UnsafeApi import Document
 from timeline import create_timeline
 
 
@@ -38,6 +39,17 @@ def authenticate(scope, args):
     return service, http
 
 
+def getTotalChanges(document):
+    print("Loading all changes. (May take a while, especially if using --fine flag).")
+    changes = document.getTotalChanges()
+    totalSize = changes.totalAdditions() + changes.totalRemovals()
+    users = changes.getUsers()
+    for user in users:
+        if user != "unknown":
+            userSize = changes.userAdditions(user) + changes.userRemovals(user)
+            print("%s made %2.2f%% of all changes" % (document.getUser(user).name, (userSize / totalSize) * 100))
+
+
 if __name__ == '__main__':
     args = parseArguments()
     service, http = authenticate('https://www.googleapis.com/auth/drive'
@@ -53,9 +65,14 @@ if __name__ == '__main__':
     rev_meta = service.revisions().list(fileId=args.fileId).execute()
     create_timeline(rev_meta)
 
+    # Print Document Editors
+    findAndPrintEditors(rev_meta)
+
     if args.dates:
         # Print Modified dates
         getDatesModifiedWithin(args.dates, rev_meta)
 
-    # Print Document Editors
-    findAndPrintEditors(rev_meta)
+    # Print Unsafe API
+    if args.isUnsafe:
+        doc = Document(http, args.fileId, args.useFine)
+        getTotalChanges(doc)
