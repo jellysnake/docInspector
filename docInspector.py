@@ -1,6 +1,8 @@
 from argparse import ArgumentParser
 
-from oauth2client import tools
+from googleapiclient.discovery import build
+from httplib2 import Http
+from oauth2client import file, client, tools
 
 
 def parseArguments():
@@ -21,5 +23,21 @@ def parseArguments():
     return parser.parse_args()
 
 
+def authenticate(scope, args):
+    store = file.Storage('token.json')
+    creds = store.get()
+    if not creds or creds.invalid:
+        flow = client.flow_from_clientsecrets('credentials.json', scope)
+        creds = tools.run_flow(flow, store, args)
+    http = creds.authorize(Http())
+    service = build('drive', 'v2', http=http)
+    return service, http
+
+
 if __name__ == '__main__':
     args = parseArguments()
+    service, http = authenticate('https://www.googleapis.com/auth/drive'
+                                 if args.isUnsafe else
+                                 'https://www.googleapis.com/auth/drive.metadata.readonly',
+                                 args)
+
