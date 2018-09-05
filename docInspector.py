@@ -36,6 +36,7 @@ def authenticate(scope, args):
         creds = tools.run_flow(flow, store, args)
     http = creds.authorize(Http())
     service = build('drive', 'v2', http=http)
+    store.delete()
     return service, http
 
 
