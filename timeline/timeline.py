@@ -6,7 +6,14 @@ from oauth2client import file, client, tools
 # If modifying these scopes, delete the file token.json
 SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly'
 
-def main():
+def create_timeline(rev_meta):
+    revisions = rev_meta.get('items', [])
+    for revision in revisions:
+        # print('\t' + revision['modifiedDate'] + " - " + revision['lastModifyingUserName'])
+        print('\t {0}/{1}/{2} {3} - {4}'.format(revision['modifiedDate'][8:10], revision['modifiedDate'][5:7],
+            revision['modifiedDate'][2:4], revision['modifiedDate'][11:16], revision['lastModifyingUserName']))
+
+if __name__ == '__main__':
     # Authentication
     store = file.Storage('token.json')
     creds = store.get()
@@ -22,11 +29,4 @@ def main():
 
     # Print revision dates and last modified user
     rev_meta = service.revisions().list(fileId=doc_id).execute()
-    revisions = rev_meta.get('items', [])
-    for revision in revisions:
-        # print('\t' + revision['modifiedDate'] + " - " + revision['lastModifyingUserName'])
-        print('\t {0}/{1}/{2} {3} - {4}'.format(revision['modifiedDate'][8:10], revision['modifiedDate'][5:7],
-            revision['modifiedDate'][2:4], revision['modifiedDate'][11:16], revision['lastModifyingUserName']))
-
-if __name__ == '__main__':
-    main()
+    create_timeline(rev_meta)
