@@ -19,6 +19,9 @@ def parseArguments():
     parser.add_argument('-d, --dates', dest='dates', action='store', required=False,
                         help='The start and date to load from. Format of "dd-mm-yyyy/"dd-mm-yyyy"')
 
+    parser.add_argument('-t, --time', dest='timeIncrement', type=str, default='01:00:00',
+                        required=False, help="The time increment to display changes in.")
+
     parser.add_argument('-u, --unsafe', dest='isUnsafe', action='store_true', default=False,
                         required=False, help='Use the unsafe API to gain more data')
 
