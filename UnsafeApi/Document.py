@@ -126,3 +126,17 @@ class Document:
             if revisions[i].startId >= startId and revisions[i].endId <= endId:
                 changes.mergeIn(revisions[i].getChanges())
         return changes
+
+    def getChangesInIncrement(self, increment):
+        revisions = sorted(self.getRevisionList(),
+                           key=lambda x: x.endTime)
+        changes = []
+        time = revisions[0].endTime
+        i = 0
+        while i < len(revisions):
+            changes.append(ChangeData())
+            while time <= revisions[i].endTime and i < len(revisions):
+                changes[-1].mergeIn(revisions[i].getChanges())
+                i += 1
+            time += increment
+        return changes
