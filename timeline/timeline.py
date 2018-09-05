@@ -6,30 +6,30 @@ from oauth2client import file, client, tools
 # If modifying these scopes, delete the file token.json
 SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly'
 
-def main():
-    """Shows basic usage of the Drive v3 API.
-    Prints the names and ids of the first 10 files the user has access to.
-    """
+''' 
+Prints timeline of given doc to the console
+:parameter rev_meta : revision metadata from google docs API
+'''
+def create_timeline(rev_meta):
+    revisions = rev_meta.get('items', [])
+    for revision in revisions:
+        print('\t {0}/{1}/{2} {3} - {4}'.format(revision['modifiedDate'][8:10], revision['modifiedDate'][5:7],
+            revision['modifiedDate'][2:4], revision['modifiedDate'][11:16], revision['lastModifyingUserName']))
+
+if __name__ == '__main__':
+    # Authentication
     store = file.Storage('token.json')
     creds = store.get()
     if not creds or creds.invalid:
         flow = client.flow_from_clientsecrets('credentials.json', SCOPES)
         creds = tools.run_flow(flow, store)
-    service = build('drive', 'v3', http=creds.authorize(Http()))
+    service = build('drive', 'v2', http=creds.authorize(Http()))
 
     # Print file name
-    # doc_id = input('Enter id> ')
     doc_id = '1lt2SmAjRs14EqwlKyix8VsypZE0mBSfRztkjzma0BjI'
     file_meta = service.files().get(fileId=doc_id).execute()
-    print('name: ' + file_meta.get('name'))
+    print(file_meta.get('title'))
 
-    # Print revision dates
+    # Print revision dates and last modified user
     rev_meta = service.revisions().list(fileId=doc_id).execute()
-    revisions = rev_meta.get('revisions', [])
-    print(service.revisions().get(fileId=doc_id, revisionId='1').execute()) # print revision data for first revision
-    print('revisions: ')
-    for revision in revisions:
-        print('\t' + revision['modifiedTime'])
-
-if __name__ == '__main__':
-    main()
+    create_timeline(rev_meta)
