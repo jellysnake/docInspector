@@ -4,6 +4,8 @@ from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
 
+from timeline import create_timeline
+
 
 def parseArguments():
     parser = ArgumentParser(description='Runs statistical analysis on the contributions to google doc files',
@@ -41,3 +43,10 @@ if __name__ == '__main__':
                                  'https://www.googleapis.com/auth/drive.metadata.readonly',
                                  args)
 
+    # Print file name
+    file_meta = service.files().get(fileId=args.fileId).execute()
+    print(file_meta.get('title'))
+
+    # Print timeline code
+    rev_meta = service.revisions().list(fileId=args.fileId).execute()
+    create_timeline(rev_meta)
