@@ -60,12 +60,13 @@ def getIncrementData(doc: Document, increment):
     changes = doc.getChangesInIncrement(millis)
     i = 0
     print("Changes per student per increment:")
-    for change in changes:
+    for i in changes:
         print(f"{i}'th increment")
-        for user in change.getUsers():
-            print(f"\t{doc.getUser(user)} added {change.userAdditions(user)} chars, "
-                  f"and removed {change.userRemovals(user)} "
-                  f"in {change.userChanges(user)} edits")
+        for user in changes[i].getUsers():
+            if user != 'unknown':
+                print(f"\t{doc.getUser(user)} added {changes[i].userAdditions(user)} chars, "
+                      f"and removed {changes[i].userRemovals(user)} "
+                      f"in {changes[i].userChanges(user)} edits")
         print("")
 
 
