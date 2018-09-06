@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 
 from .Helpers import UnsafeRequester, User
 from .Revisions import RevisionMetadata, ChangeData
@@ -126,3 +126,25 @@ class Document:
             if revisions[i].startId >= startId and revisions[i].endId <= endId:
                 changes.mergeIn(revisions[i].getChanges())
         return changes
+
+    def getChangesInIncrement(self, increment) -> Dict[ChangeData]:
+        """
+        Aggregates all the changes into set increments
+        Filters the increments with no changes in them
+
+        :param increment: The size of the increment in milliseconds
+        :return: A dictionary of change data linking the increment number to the changes made.
+        """
+        revisions = sorted(self.getRevisionList(),
+                           key=lambda x: x.endTime)
+        changes = []
+        time = revisions[0].endTime + increment
+        i = 0
+        while i < len(revisions):
+            changes.append(ChangeData())
+            while i < len(revisions) and revisions[i].endTime <= time:
+                changes[-1].mergeIn(revisions[i].getChanges())
+                i += 1
+            time += increment
+        # Filter out empty increment
+        return {i: changes[i] for i in range(len(changes)) if changes[i].totalChanges() != 0}
