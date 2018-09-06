@@ -131,12 +131,13 @@ class Document:
         revisions = sorted(self.getRevisionList(),
                            key=lambda x: x.endTime)
         changes = []
-        time = revisions[0].endTime
+        time = revisions[0].endTime + increment
         i = 0
         while i < len(revisions):
             changes.append(ChangeData())
-            while time <= revisions[i].endTime and i < len(revisions):
+            while i < len(revisions) and revisions[i].endTime <= time:
                 changes[-1].mergeIn(revisions[i].getChanges())
                 i += 1
             time += increment
-        return changes
+        # Filter out empty increment
+        return {i: changes[i] for i in range(len(changes)) if changes[i].totalChanges() != 0}
