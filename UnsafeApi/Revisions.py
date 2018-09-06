@@ -42,9 +42,9 @@ class ChangeData:
                     self.removals += size
                 elif editType is None:
                     self.additions += size
-                    print(f"Edit of size {size} had no edit type. Defaulting to addition")
+                    # print(f"Edit of size {size} had no edit type. Defaulting to addition")
                 else:
-                    print(f"ERROR: Ghost edit of size {size} found?")
+                    # print(f"ERROR: Ghost edit of size {size} found?")
                     self.changes -= 1  # Ensure it doesn't show up
 
         def hasUser(self) -> bool:

@@ -62,7 +62,7 @@ def getDatesModifiedWithin(dates, data):
     # Sprintdoc = open('ProjectPlanData.txt')
     Sprintdoc = json.dumps(data, indent=4, separators=(',', ': ')).split('\n')
     # Global variables
-    finder = 'modifiedTime'
+    finder = 'modifiedDate'
     dateList = []
 
     # dateRange = input("Enter date range in format yyyy-mm-dd/yyyy-mm-dd:\n")
