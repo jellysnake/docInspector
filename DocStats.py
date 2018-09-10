@@ -1,94 +1,88 @@
-from typing import Dict, List
+from typing import List
 
 
 class TimelineStats:
     class IncrementStats:
         def __init__(self):
-            ...
+            self.additions = {}
+            self.removals = {}
+            self.changes = {}
 
-        def getAdditions(self) -> Dict[str, int]:
-            ...
+        def isEmpty(self):
+            return self.changes
 
-        def getRemovals(self) -> Dict[str, int]:
-            ...
+        def addAddition(self, editor, size):
+            if editor not in self.additions:
+                self.additions[editor] = 0
+                self.changes[editor] = 0
 
-        def getChanges(self) -> Dict[str, int]:
-            ...
+            self.additions[editor] = size
+            self.changes[editor] += 1
 
-        def setAdditions(self, editor, value):
-            ...
+        def addRemoval(self, editor, size):
+            if editor not in self.additions:
+                self.removals[editor] = 0
+                self.changes[editor] = 0
 
-        def setRemovals(self, editor, value):
-            ...
+            self.removals[editor] = size
+            self.changes[editor] += 1
 
-        def setChanges(self, editor, value):
-            ...
+    def __init__(self, size):
+        self.increments = []
+        self.incrementSize = size
 
-    def __init__(self):
-        ...
+    def getIncrement(self, id) -> IncrementStats:
+        return self.increments[id]
 
-    def getIncrement(self, id):
-        ...
-
-    def makeIncrement(self):
-        ...
+    def makeIncrement(self) -> IncrementStats:
+        self.increments.append(self.IncrementStats())
+        return self.increments[-1]
 
     def removeIncrement(self, id):
-        ...
+        self.increments.pop(id)
 
     def getIncrementSize(self):
-        ...
+        return self.incrementSize
 
     def setIncrementSize(self, size):
-        ...
+        self.incrementSize = size
 
     def getNumIncrements(self):
-        ...
+        return len(self.increments)
 
 
 class IndividualStats:
     class EditorStats:
         def __init__(self):
-            ...
+            self.additions = 0
+            self.removals = 0
+            self.changes = 0
+            self.name = "anonymous"
+            self.percent = 0
 
-        def getAdditions(self):
-            ...
+        def addAddition(self, size):
+            self.additions = size
+            self.changes += 1
 
-        def getRemovals(self):
-            ...
-
-        def getChanges(self):
-            ...
-
-        def getName(self):
-            ...
-
-        def setAdditions(self, num):
-            ...
-
-        def setRemovals(self, num):
-            ...
-
-        def setChanges(self, num):
-            ...
-
-        def setName(self, name):
-            ...
+        def addRemoval(self, size):
+            self.removals = size
+            self.changes += 1
 
     def __init__(self):
-        ...
+        self.editors = {}
 
     def getEditor(self, id) -> EditorStats:
-        ...
+        return self.editors[id]
 
     def removeEditor(self, id):
-        ...
+        del self.editors[id]
 
     def makeEditor(self, id) -> EditorStats:
-        ...
+        self.editors[id] = self.EditorStats()
+        return self.editors[id]
 
     def getEditors(self) -> List[str]:
-        ...
+        return list(self.editors.keys())
 
 
 class DocStats:
