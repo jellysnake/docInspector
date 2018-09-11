@@ -6,7 +6,6 @@ from oauth2client import file, client, tools
 
 from Collectors import *
 from DocStats import DocStats
-from UnsafeApi import Document
 
 
 def parseArguments():
@@ -57,33 +56,6 @@ def authenticate(scope, args):
     return service, http
 
 
-def getTotalChanges(document):
-    print("Loading all changes. (May take a while, especially if using --fine flag).")
-    changes = document.getTotalChanges()
-    totalSize = changes.totalAdditions() + changes.totalRemovals()
-    users = changes.getUsers()
-    for user in users:
-        if user != "unknown":
-            userSize = changes.userAdditions(user) + changes.userRemovals(user)
-            print("%s made %2.2f%% of all changes" % (document.getUser(user).name, (userSize / totalSize) * 100))
-
-
-def getIncrementData(doc: Document, increment):
-    days, hours, mins = map(int, increment.split(':'))
-    millis = (((days * 24) + hours) * 60 + mins) * 60 * 1000
-    changes = doc.getChangesInIncrement(millis)
-    i = 0
-    print("Changes per student per increment:")
-    for i in changes:
-        print(f"{i}'th increment")
-        for user in changes[i].getUsers():
-            if user != 'unknown':
-                print(f"\t{doc.getUser(user)} added {changes[i].userAdditions(user)} chars, "
-                      f"and removed {changes[i].userRemovals(user)} "
-                      f"in {changes[i].userChanges(user)} edits")
-        print("")
-
-
 if __name__ == '__main__':
     args = parseArguments()
     service, http = authenticate('https://www.googleapis.com/auth/drive'
@@ -92,6 +64,7 @@ if __name__ == '__main__':
                                  args)
 
     docStats = DocStats(args.timeIncrement)
+    docStats.general.id = args.fileId
 
     # Get general stats
     collectGeneralStats(docStats, service)
@@ -104,11 +77,4 @@ if __name__ == '__main__':
 
     if args.isUnsafe:
         # Get unsafe Stats
-        collectUnsafeStats(docStats)
-        pass
-
-    # Print Unsafe API
-    if args.isUnsafe:
-        doc = Document(http, args.fileId, args.useFine)
-        getTotalChanges(doc)
-        getIncrementData(doc, args.timeIncrement)
+        collectUnsafeStats(docStats, http, args)
