@@ -4,6 +4,11 @@ from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
 
+from CollectGeneralStats import collectGeneralStats
+from CollectIndividualStats import collectIndividualStats
+from CollectTimelineStats import collectTimelineStats
+from CollectUnsafeStats import collectUnsafeStats
+from DocStats import DocStats
 from DocumentEditors import findAndPrintEditors
 from ModifyDateRange import getDatesModifiedWithin
 from UnsafeApi import Document
@@ -76,6 +81,22 @@ if __name__ == '__main__':
                                  if args.isUnsafe else
                                  'https://www.googleapis.com/auth/drive.metadata.readonly',
                                  args)
+
+    docStats = DocStats(args.timeIncrement)
+
+    # Get general stats
+    collectGeneralStats()
+
+    # Get individual stats
+    collectIndividualStats()
+
+    #  Get timeline stats
+    collectTimelineStats()
+
+    if args.isUnsafe:
+        # Get unsafe Stats
+        collectUnsafeStats()
+        pass
 
     # Print file name
     file_meta = service.files().get(fileId=args.fileId).execute()
