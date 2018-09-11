@@ -16,6 +16,12 @@ from timeline import create_timeline
 
 
 def parseArguments():
+    """
+    Builds the argument parser, and then calls it to parse the arguments
+    Also correctly inherits from the oauth2client arguments.
+
+    :return: The argument object of the parsed arguments
+    """
     parser = ArgumentParser(description='Runs statistical analysis on the contributions to google doc files',
                             parents=[tools.argparser])
     parser.add_argument('fileId', metavar='docId', type=str,
@@ -37,6 +43,14 @@ def parseArguments():
 
 
 def authenticate(scope, args):
+    """
+    Performs the authentication flow.
+    Handles the credential management
+
+    :param scope: The scope to authenticate with
+    :param args: The arguments passed in to the program.
+    :return: (The drive api service, The http requests object)
+    """
     store = file.Storage('token.json')
     creds = store.get()
     if not creds or creds.invalid:
@@ -44,6 +58,7 @@ def authenticate(scope, args):
         creds = tools.run_flow(flow, store, args)
     http = creds.authorize(Http())
     service = build('drive', 'v2', http=http)
+
     store.delete()
     return service, http
 
