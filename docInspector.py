@@ -4,13 +4,18 @@ from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
 
-from DocumentEditors import findAndPrintEditors
-from ModifyDateRange import getDatesModifiedWithin
-from UnsafeApi import Document
-from timeline import create_timeline
+from Collectors import *
+from DocStats import DocStats
+from OutputStats import outputStats
 
 
 def parseArguments():
+    """
+    Builds the argument parser, and then calls it to parse the arguments
+    Also correctly inherits from the oauth2client arguments.
+
+    :return: The argument object of the parsed arguments
+    """
     parser = ArgumentParser(description='Runs statistical analysis on the contributions to google doc files',
                             parents=[tools.argparser])
     parser.add_argument('fileId', metavar='docId', type=str,
@@ -32,6 +37,14 @@ def parseArguments():
 
 
 def authenticate(scope, args):
+    """
+    Performs the authentication flow.
+    Handles the credential management
+
+    :param scope: The scope to authenticate with
+    :param args: The arguments passed in to the program.
+    :return: (The drive api service, The http requests object)
+    """
     store = file.Storage('token.json')
     creds = store.get()
     if not creds or creds.invalid:
@@ -39,35 +52,9 @@ def authenticate(scope, args):
         creds = tools.run_flow(flow, store, args)
     http = creds.authorize(Http())
     service = build('drive', 'v2', http=http)
+
     store.delete()
     return service, http
-
-
-def getTotalChanges(document):
-    print("Loading all changes. (May take a while, especially if using --fine flag).")
-    changes = document.getTotalChanges()
-    totalSize = changes.totalAdditions() + changes.totalRemovals()
-    users = changes.getUsers()
-    for user in users:
-        if user != "unknown":
-            userSize = changes.userAdditions(user) + changes.userRemovals(user)
-            print("%s made %2.2f%% of all changes" % (document.getUser(user).name, (userSize / totalSize) * 100))
-
-
-def getIncrementData(doc: Document, increment):
-    days, hours, mins = map(int, increment.split(':'))
-    millis = (((days * 24) + hours) * 60 + mins) * 60 * 1000
-    changes = doc.getChangesInIncrement(millis)
-    i = 0
-    print("Changes per student per increment:")
-    for i in changes:
-        print(f"{i}'th increment")
-        for user in changes[i].getUsers():
-            if user != 'unknown':
-                print(f"\t{doc.getUser(user)} added {changes[i].userAdditions(user)} chars, "
-                      f"and removed {changes[i].userRemovals(user)} "
-                      f"in {changes[i].userChanges(user)} edits")
-        print("")
 
 
 if __name__ == '__main__':
@@ -77,23 +64,20 @@ if __name__ == '__main__':
                                  'https://www.googleapis.com/auth/drive.metadata.readonly',
                                  args)
 
-    # Print file name
-    file_meta = service.files().get(fileId=args.fileId).execute()
-    print(file_meta.get('title'))
+    docStats = DocStats(args.timeIncrement)
+    docStats.general.id = args.fileId
 
-    # Print timeline code
-    rev_meta = service.revisions().list(fileId=args.fileId).execute()
-    create_timeline(rev_meta)
+    # Get general stats
+    collectGeneralStats(docStats, service)
 
-    # Print Document Editors
-    findAndPrintEditors(rev_meta)
+    # Get individual stats
+    collectIndividualStats(docStats, service, args)
 
-    if args.dates:
-        # Print Modified dates
-        getDatesModifiedWithin(args.dates, rev_meta)
+    #  Get timeline stats
+    collectTimelineStats(docStats, service)
 
-    # Print Unsafe API
     if args.isUnsafe:
-        doc = Document(http, args.fileId, args.useFine)
-        getTotalChanges(doc)
-        getIncrementData(doc, args.timeIncrement)
+        # Get unsafe Stats
+        collectUnsafeStats(docStats, http, args)
+
+    outputStats(docStats, args)
