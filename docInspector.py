@@ -97,7 +97,7 @@ if __name__ == '__main__':
     docStats = DocStats(args.timeIncrement)
 
     # Get general stats
-    collectGeneralStats(docStats)
+    collectGeneralStats(docStats, service)
 
     # Get individual stats
     collectIndividualStats(docStats)
@@ -109,10 +109,6 @@ if __name__ == '__main__':
         # Get unsafe Stats
         collectUnsafeStats(docStats)
         pass
-
-    # Print file name
-    file_meta = service.files().get(fileId=args.fileId).execute()
-    print(file_meta.get('title'))
 
     # Print timeline code
     rev_meta = service.revisions().list(fileId=args.fileId).execute()
