@@ -6,8 +6,6 @@ from oauth2client import file, client, tools
 
 from Collectors import *
 from DocStats import DocStats
-from DocumentEditors import findAndPrintEditors
-from ModifyDateRange import getDatesModifiedWithin
 from UnsafeApi import Document
 
 
@@ -99,7 +97,7 @@ if __name__ == '__main__':
     collectGeneralStats(docStats, service)
 
     # Get individual stats
-    collectIndividualStats(docStats)
+    collectIndividualStats(docStats, service, args)
 
     #  Get timeline stats
     collectTimelineStats(docStats, service)
@@ -108,15 +106,6 @@ if __name__ == '__main__':
         # Get unsafe Stats
         collectUnsafeStats(docStats)
         pass
-
-    # Print timeline code
-
-    # Print Document Editors
-    findAndPrintEditors(rev_meta)
-
-    if args.dates:
-        # Print Modified dates
-        getDatesModifiedWithin(args.dates, rev_meta)
 
     # Print Unsafe API
     if args.isUnsafe:
