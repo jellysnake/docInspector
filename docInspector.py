@@ -9,7 +9,6 @@ from DocStats import DocStats
 from DocumentEditors import findAndPrintEditors
 from ModifyDateRange import getDatesModifiedWithin
 from UnsafeApi import Document
-from timeline import create_timeline
 
 
 def parseArguments():
@@ -103,7 +102,7 @@ if __name__ == '__main__':
     collectIndividualStats(docStats)
 
     #  Get timeline stats
-    collectTimelineStats(docStats)
+    collectTimelineStats(docStats, service)
 
     if args.isUnsafe:
         # Get unsafe Stats
@@ -111,8 +110,6 @@ if __name__ == '__main__':
         pass
 
     # Print timeline code
-    rev_meta = service.revisions().list(fileId=args.fileId).execute()
-    create_timeline(rev_meta)
 
     # Print Document Editors
     findAndPrintEditors(rev_meta)
