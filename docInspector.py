@@ -4,10 +4,7 @@ from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
 
-from CollectGeneralStats import collectGeneralStats
-from CollectIndividualStats import collectIndividualStats
-from CollectTimelineStats import collectTimelineStats
-from CollectUnsafeStats import collectUnsafeStats
+from Collectors import *
 from DocStats import DocStats
 from DocumentEditors import findAndPrintEditors
 from ModifyDateRange import getDatesModifiedWithin
