@@ -1,6 +1,15 @@
 from typing import List
 
 
+class GeneralStats:
+    """
+    Collates stats about the document itself
+    """
+
+    def __init__(self):
+        self.name = ""
+
+
 class TimelineStats:
     """
     Collates stats calculated for the timeline
@@ -180,8 +189,9 @@ class DocStats:
     """
     individuals: IndividualStats
     timeline: TimelineStats
+    general: GeneralStats
 
     def __init__(self, incrementSize):
-        self.editors = []
         self.timeline = TimelineStats(incrementSize)
         self.individuals = IndividualStats()
+        self.general = GeneralStats()
