@@ -1,2 +1,2 @@
-def collectIndividualStats():
+def collectIndividualStats(stats):
     ...

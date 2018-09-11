@@ -1,2 +1,2 @@
-def collectTimelineStats():
+def collectTimelineStats(stats):
     ...

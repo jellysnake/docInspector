@@ -1,2 +1,2 @@
-def collectUnsafeStats():
+def collectUnsafeStats(stats):
     ...

@@ -100,17 +100,17 @@ if __name__ == '__main__':
     docStats = DocStats(args.timeIncrement)
 
     # Get general stats
-    collectGeneralStats()
+    collectGeneralStats(docStats)
 
     # Get individual stats
-    collectIndividualStats()
+    collectIndividualStats(docStats)
 
     #  Get timeline stats
-    collectTimelineStats()
+    collectTimelineStats(docStats)
 
     if args.isUnsafe:
         # Get unsafe Stats
-        collectUnsafeStats()
+        collectUnsafeStats(docStats)
         pass
 
     # Print file name
