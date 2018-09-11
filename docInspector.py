@@ -6,6 +6,7 @@ from oauth2client import file, client, tools
 
 from Collectors import *
 from DocStats import DocStats
+from OutputStats import outputStats
 
 
 def parseArguments():
@@ -78,3 +79,5 @@ if __name__ == '__main__':
     if args.isUnsafe:
         # Get unsafe Stats
         collectUnsafeStats(docStats, http, args)
+
+    outputStats(docStats, args)
