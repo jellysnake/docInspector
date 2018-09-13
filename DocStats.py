@@ -7,8 +7,8 @@ class GeneralStats:
     """
 
     def __init__(self):
-        self.name = ""
-        self.id = ""
+        self.name = None
+        self.id = None
 
 
 class TimelineStats:
