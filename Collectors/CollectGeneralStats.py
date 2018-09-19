@@ -7,7 +7,7 @@ def collectGeneralStats(stats: DocStats, service):
     print("Title: ", file_meta.get('title'))
 
     # Print link to google doc file
-    print('Link ', file_meta.get('selfLink'))
+    print('Link: ', file_meta.get('selfLink'))
 
     # Print date of creation
     creationDate = file_meta.get('createdDate')
