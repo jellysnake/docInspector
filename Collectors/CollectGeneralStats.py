@@ -4,10 +4,10 @@ from DocStats import DocStats
 def collectGeneralStats(stats: DocStats, service):
     # Print file name
     file_meta = service.files().get(fileId=stats.general.id).execute()
-    print(file_meta.get('title'))
+    print("Title: ", file_meta.get('title'))
 
     # Print link to google doc file
-    print('Link ', file.meta.get('selfLink'))
+    print('Link ', file_meta.get('selfLink'))
 
     # Print date of creation
     creationDate = file_meta.get('createdDate')
