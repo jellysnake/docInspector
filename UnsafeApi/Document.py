@@ -127,7 +127,7 @@ class Document:
                 changes.mergeIn(revisions[i].getChanges())
         return changes
 
-    def getChangesInIncrement(self, increment) -> Dict[ChangeData]:
+    def getChangesInIncrement(self, increment) -> Dict[int, ChangeData]:
         """
         Aggregates all the changes into set increments
         Filters the increments with no changes in them
