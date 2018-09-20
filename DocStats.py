@@ -7,8 +7,10 @@ class GeneralStats:
     """
 
     def __init__(self):
-        self.name = None
-        self.id = None
+        self.name = ""
+        self.id = ""
+        self.link = ""
+        self.creationDate = ""
 
 
 class TimelineStats:
@@ -25,6 +27,7 @@ class TimelineStats:
             self.additions = {}
             self.removals = {}
             self.changes = {}
+            self.editors = set()
 
         def isEmpty(self):
             """
