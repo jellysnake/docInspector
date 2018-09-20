@@ -27,6 +27,7 @@ class TimelineStats:
             self.additions = {}
             self.removals = {}
             self.changes = {}
+            self.editors = set()
 
         def isEmpty(self):
             """
@@ -124,11 +125,11 @@ class IndividualStats:
         """
 
         def __init__(self):
-            self.additions = 0
-            self.removals = 0
-            self.changes = 0
-            self.name = "anonymous"
-            self.percent = 0
+            self.additions = None
+            self.removals = None
+            self.changes = None
+            self.name = None
+            self.percent = None
 
         def addAddition(self, size):
             """
