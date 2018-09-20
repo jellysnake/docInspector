@@ -74,7 +74,7 @@ if __name__ == '__main__':
     collectIndividualStats(docStats, service, args)
 
     #  Get timeline stats
-    collectTimelineStats(docStats, service)
+    collectTimelineStats(docStats, service, args)
 
     if args.isUnsafe:
         # Get unsafe Stats
