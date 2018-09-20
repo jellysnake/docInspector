@@ -83,6 +83,7 @@ if __name__ == '__main__':
 
     # Print timeline code
     rev_meta = service.revisions().list(fileId=args.fileId).execute()
+    file_name = service.files().get(fileId=args.fileId).execute().get('title')
     create_timeline(rev_meta)
 
     # Print Document Editors
