@@ -24,7 +24,7 @@ class TimelineStats:
         """
 
         def __init__(self):
-            self.additions = 
+            self.additions = {}
             self.removals = {}
             self.changes = {}
 
