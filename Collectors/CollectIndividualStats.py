@@ -6,8 +6,11 @@ from ModifyDateRange import getDatesModifiedWithin
 def collectIndividualStats(stats: DocStats, service, args):
     # Print Document Editors
     rev_meta = service.revisions().list(fileId=stats.general.id).execute()
-    findAndPrintEditors(rev_meta)
+    editors = set()
+    for revision in rev_meta["items"]:
+        edits = revision["lastModifyingUserName"]
+        editors.add(edits)
+    for editor in editors:
+        stats.individuals.makeEditor(editor)
 
-    if args.dates:
-        # Print Modified dates
-        getDatesModifiedWithin(args.dates, rev_meta)
+    print(editors)
