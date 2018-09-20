@@ -1,7 +1,8 @@
-from webbrowser import open_new
+from datetime import datetime
 from os import mkdir, path
-from DocStats import DocStats
+from webbrowser import open_new
 
+from DocStats import DocStats
 
 OUTPUT_DIR = "output"
 
@@ -61,25 +62,27 @@ def outputStats(stats: DocStats, args):
 
     for i in range(num_increments):
         increment = timeline_stats.getIncrement(i)
-        if i == 0:
-            date = timeline_stats.getIncrementSize()
-        else:
-            date = ""
 
         additions = increment.additions
         removals = increment.removals
-
-        if i < len(additions):
-            for editor, amount in additions.items():
-                file.write(f"""
-                        <tr>
-                            <td>{date}</td>
-                            <td>Addition</td>
-                            <td>{editor}</td>
-                            <td>{amount}</td>
-                        </tr>
-                """)
-
+        for editor, amount in additions.items():
+            file.write(f"""
+                    <tr>
+                        <td></td>
+                        <td>Addition</td>
+                        <td>{editor}</td>
+                        <td>{amount}</td>
+                    </tr>
+            """)
+        for editor, amount in removals.items():
+            file.write(f"""
+                    <tr>
+                        <td></td>
+                        <td>Removal</td>
+                        <td>{editor}</td>
+                        <td>{amount}</td>
+                    </tr>
+            """)
     file.write("""
                     </table>
                 </div>
@@ -89,3 +92,8 @@ def outputStats(stats: DocStats, args):
 
     file.close()
     open_new(file_path)
+
+
+def timeToMilli(time):
+    return datetime.strptime(time,
+                             "%Y-%m-%dT%H:%M:%S.%fZ").timestamp()

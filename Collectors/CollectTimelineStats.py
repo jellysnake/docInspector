@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from DocStats import DocStats
-from OutputStats import outputStats
 
 
 def collectTimelineStats(stats: DocStats, service, args):
