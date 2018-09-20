@@ -8,9 +8,6 @@ def collectTimelineStats(stats: DocStats, service, args):
     days, hours, mins = map(int, args.timeIncrement.split(':'))
     timeSize = (((days * 24) + hours) * 60 + mins) * 60 * 1000
     rev_meta = service.revisions().list(fileId=stats.general.id).execute()
-<<<<<<< HEAD
-    outputStats(stats, '')
-=======
     currentTime = timeToMilli(stats.general.creationDate)
 
     i = 0
@@ -25,4 +22,3 @@ def collectTimelineStats(stats: DocStats, service, args):
 def timeToMilli(time):
     return datetime.strptime(time,
                             "%Y-%m-%dT%H:%M:%S.%fZ").timestamp()
->>>>>>> fd707df651dab6c8ec5a8b5fb3b2e51599cf1b22

@@ -57,9 +57,10 @@ def outputStats(stats: DocStats, args):
     """)
 
     num_increments = timeline_stats.getNumIncrements()
+    print(num_increments)
 
     for i in range(num_increments):
-        increment = timeline_stats.getIncrement[i]
+        increment = timeline_stats.getIncrement(i)
         if i == 0:
             date = timeline_stats.getIncrementSize()
         else:
