@@ -4,7 +4,7 @@ from UnsafeApi import Document
 
 def collectUnsafeStats(stats: DocStats, http, args):
     doc = Document(http, stats.general.id, args.useFine)
-    getTotalChanges(doc)
+    getTotalChanges(doc, stats)
     getIncrementData(doc, args.timeIncrement, stats)
 
 
