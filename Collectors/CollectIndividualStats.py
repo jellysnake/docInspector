@@ -12,5 +12,3 @@ def collectIndividualStats(stats: DocStats, service, args):
         editors.add(edits)
     for editor in editors:
         stats.individuals.makeEditor(editor)
-
-    print(editors)

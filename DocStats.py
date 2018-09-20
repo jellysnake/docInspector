@@ -150,6 +150,7 @@ class IndividualStats:
 
     def __init__(self):
         self.editors = {}
+        self.total = self.EditorStats()
 
     def getEditor(self, id) -> EditorStats:
         """
