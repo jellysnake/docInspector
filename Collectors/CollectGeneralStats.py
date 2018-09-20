@@ -11,7 +11,6 @@ def collectGeneralStats(stats: DocStats, service):
     
     # Print date of creation
     creationDate = file_meta.get('createdDate')
-    creationDate = creationDate[:9]
     stats.general.creationDate = creationDate
     
         
