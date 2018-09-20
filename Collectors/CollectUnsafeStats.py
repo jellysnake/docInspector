@@ -20,6 +20,8 @@ def getTotalChanges(document):
 
 
 def getIncrementData(doc: Document, increment, stats):
+    for i in range(stats.timeline.getNumIncrements(), 0)
+        stats.timeline.removeIncrement()
     days, hours, mins = map(int, increment.split(':'))
     millis = (((days * 24) + hours) * 60 + mins) * 60 * 1000
     changes = doc.getChangesInIncrement(millis)
