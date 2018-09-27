@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+    <head>
+<!-- GENERAL STATS TITLE -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                background-color: #474e5d;
+                font-family: Helvetica, sans-serif;
+            }
+
+            /* General stats */
+            .general_stats {
+                position: fixed;
+                top: 18px;
+                bottom: 10px;
+                left: 20px;
+                width: 61%;
+                margin: 0 auto;
+                padding: 20px 30px;
+                background-color: white;
+                border-radius: 6px;
+            }
+
+            /* td element in General Stats section */
+            .gs_td {
+                padding-top: 5px;
+            }
+
+            .gs_td:nth-child(odd) {
+                padding-right: 40px;
+            }
+
+            /* The actual timeline (the vertical ruler) */
+            .timeline {
+                position: absolute;
+                right: 10px;
+                width: 40%;
+                margin: 0 auto;
+            }
+
+            /* The actual timeline (the vertical ruler) */
+            .timeline::after {
+                content: '';
+                position: absolute;
+                width: 6px;
+                background-color: white;
+                top: -10px;
+                bottom: 0;
+                right: 4.8%;
+            }
+
+            /* Add arrows to the left container (pointing right) */
+            .container::before {
+                content: " ";
+                height: 0;
+                position: absolute;
+                top: 22px;
+                width: 0;
+                z-index: 1;
+                right: 30px;
+                border: medium solid white;
+                border-width: 10px 0 10px 10px;
+                border-color: transparent transparent transparent white;
+            }
+
+            /* Container around content */
+            .container {
+                padding: 10px 40px;
+                position: relative;
+                background-color: inherit;
+                width: 90%;
+                right: -4.7%;
+            }
+
+            /* The circles on the timeline */
+            .container::after {
+                content: '';
+                position: absolute;
+                width: 25px;
+                height: 25px;
+                right: -17px;
+                background-color: white;
+                border: 4px solid #FF9F55;
+                top: 15px;
+                border-radius: 50%;
+                z-index: 1;
+            }
+
+            /* The actual content */
+            .content {
+                padding: 20px 30px;
+                background-color: white;
+                position: relative;
+                border-radius: 6px;
+            }
+
+            /* Span that shows additions */
+            .add_span {
+                background-color: #0017ffa3;
+                float: right;
+            }
+
+            /* Span that shows removals */
+            .rem_span {
+                background-color: #fc4349d9;
+                float: left;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="general_stats">
+<!-- GENERAL STATS NAME -->
+       <table>
+           <tr>
+               <td class="gs_td"><b>ID:</b></td>
+<!-- GENERAL STATS ID -->
+           </tr>
+           <tr>
+               <td class="gs_td"><b>Creation Date:</b></td>
+<!-- GENERAL STATS DATE -->
+           </tr>
+           <tr>
+               <td class="gs_td"><b>Link:</b></td>
+<!-- GENERAL STATS LINK -->
+           </tr>
+       </table>
+
+        </div>
+        <div class="timeline">
+<!-- TIMELINE CONTENTS -->
+        </div>
+    </body>
+</html>
