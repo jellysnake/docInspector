@@ -23,7 +23,7 @@ def collectTimelineStats(stats: DocStats, service, args):
         increment = stats.timeline.makeIncrement()
         # Iterate whilst we are in the current increment
         # Check to make sure we don't run out of revisions
-        while timeToMilli(rev_meta['items'][i]['modifiedDate']) <= currentTime and i < len(rev_meta['items']):
+        while i < len(rev_meta['items']) and timeToMilli(rev_meta['items'][i]['modifiedDate']) <= currentTime:
             # Add the data from this revision
             increment.editors.add(rev_meta['items'][i]['lastModifyingUserName'])
             i += 1
