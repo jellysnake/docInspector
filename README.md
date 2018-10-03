@@ -5,7 +5,7 @@ A program made to provide statistical information about google documents and the
 
 ### Prerequisites
 
-- Python 3.6 or later 
+- Python 3.7 or later 
 - Google account with access to file
 
 
