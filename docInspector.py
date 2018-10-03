@@ -1,4 +1,5 @@
 from argparse import ArgumentParser
+from typing import List, Optional
 
 from googleapiclient.discovery import build
 from httplib2 import Http
@@ -53,19 +54,23 @@ def authenticate(scope, args):
     http = creds.authorize(Http())
     service = build('drive', 'v2', http=http)
 
-    store.delete()
+    # store.delete()
     return service, http
 
 
-if __name__ == '__main__':
-    args = parseArguments()
-    service, http = authenticate('https://www.googleapis.com/auth/drive'
-                                 if args.isUnsafe else
-                                 'https://www.googleapis.com/auth/drive.metadata.readonly',
-                                 args)
+def getStatsForFile(service, http, args, id) -> DocStats:
+    """
+    Calls subfunctions to load in stats for the given file.
 
+    :param service: The service to use for the API requests
+    :param http: The Requests object to use for the other requests
+    :param args: The arguments passed to the program
+    :param id: The ID of the file
+    :return: The DocStats object containing the file's stats
+    """
+    # Build docstats
     docStats = DocStats(args.timeIncrement)
-    docStats.general.id = args.fileId
+    docStats.general.id = id
 
     # Get general stats
     collectGeneralStats(docStats, service)
@@ -79,5 +84,59 @@ if __name__ == '__main__':
     if args.isUnsafe:
         # Get unsafe Stats
         collectUnsafeStats(docStats, http, args)
+    return docStats
 
-    outputStats(docStats, args)
+
+def getFilesInFolder(service, id) -> Optional[List]:
+    children = service.children().list(folderId=id).execute()
+    children = [child['id'] for child in children['items']]
+    children = [child for child in children if getMimeType(service, child) == FILE__MIME]
+    return children
+
+
+def getMimeType(service, id) -> str:
+    """
+    Gets the mime type of a given id
+
+    :param service: The service to use for requesting
+    :param id: The ID of the item to check
+    :return: True if it's a folder. False if it's a file. None if it's neither
+    """
+    data = service.files().get(fileId=id).execute()
+    return data['mimeType'] or ""
+
+
+def main():
+    args = parseArguments()
+    service, http = authenticate('https://www.googleapis.com/auth/drive'
+                                 if args.isUnsafe else
+                                 'https://www.googleapis.com/auth/drive.metadata.readonly',
+                                 args)
+    itemType = getMimeType(service, args.fileId)
+    if itemType == FOLDER_MIME:
+        print("Processing folder")
+        fileIds = getFilesInFolder(service, args.fileId)
+        fileStats = []
+
+        # Do stats for all files
+        globalStats = DocStats(args.timeIncrement)
+        for fileId in fileIds:
+            print(fileId)
+            fileStats.append(getStatsForFile(service, http, args, fileId))
+            globalStats.mergeIn(fileStats[-1])
+
+        # Output Global stats
+        outputStats(globalStats, args)
+
+    elif itemType == FILE__MIME:
+        print("Processing file")
+        docStats = getStatsForFile(service, http, args, args.fileId)
+        outputStats(docStats, args)
+    else:
+        print(f"Unknown file type. '{itemType}'")
+
+
+FOLDER_MIME = "application/vnd.google-apps.folder"
+FILE__MIME = "application/vnd.google-apps.document"
+if __name__ == '__main__':
+    main()
