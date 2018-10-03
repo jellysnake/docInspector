@@ -1,4 +1,5 @@
 from typing import List, Dict, Optional
+from weakref import ref
 
 
 class GeneralStats:
@@ -6,7 +7,7 @@ class GeneralStats:
     Collates stats about the document itself
     """
 
-    def __init__(self):
+    def __init__(self, parent):
         self.name = ""
         self.id = ""
         self.link = ""
@@ -115,6 +116,7 @@ class TimelineStats:
 
     def mergeIn(self, other):
         pass
+        self.parent = ref(parent)
 
 
 class IndividualStats:
@@ -162,9 +164,10 @@ class IndividualStats:
             self.removals = other.removals + (self.removals or 0)
             self.changes = other.changes + (self.changes or 0)
 
-    def __init__(self):
+    def __init__(self, parent):
         self.editors = {}
         self.total = self.EditorStats()
+        self.parent = ref(parent)
 
     def getEditor(self, id) -> EditorStats:
         """
@@ -233,9 +236,9 @@ class DocStats:
     general: GeneralStats
 
     def __init__(self, incrementSize):
-        self.timeline = TimelineStats(incrementSize)
-        self.individuals = IndividualStats()
-        self.general = GeneralStats()
+        self.timeline = TimelineStats(incrementSize, self)
+        self.individuals = IndividualStats(self)
+        self.general = GeneralStats(self)
 
     def mergeIn(self, other: 'DocStats'):
         self.individuals.mergeIn(other.individuals)
