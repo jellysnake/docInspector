@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List
 
 
 class ChangeData:
@@ -147,7 +148,7 @@ class ChangeData:
         """
         return self.total.changes
 
-    def getUsers(self) -> list:
+    def getUsers(self) -> List[str]:
         """
         :return: all the users that have edited this revision
         """

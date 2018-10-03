@@ -47,6 +47,8 @@ class Document:
         self.users = {}
         for userNumber in data['userMap']:
             userData = User(userNumber, data['userMap'][userNumber])
+            # TODO: Remove, debug print
+            print(f"Color '{userData.getId()}' is '{userNumber}'")
             self.users[userData.getId()] = userData
 
     def getRevisionList(self) -> List[RevisionMetadata]:
