@@ -1,4 +1,3 @@
-from datetime import datetime
 from os import mkdir, path
 from webbrowser import open_new
 
