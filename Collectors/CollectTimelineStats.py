@@ -1,6 +1,5 @@
-from datetime import datetime
-
 from DocStats import DocStats
+from Helpers import timeToMilli
 
 
 def collectTimelineStats(stats: DocStats, service, args):
@@ -28,14 +27,3 @@ def collectTimelineStats(stats: DocStats, service, args):
             increment.editors.add(rev_meta['items'][i]['lastModifyingUserName'])
             i += 1
         currentTime += timeSize
-
-
-def timeToMilli(time):
-    """
-    Converts from a google revision timestamp into milliseconds since the Epoch
-
-    :param time: The timestamp to convert
-    :return: The timestamp in milliseconds
-    """
-    return datetime.strptime(time,
-                             "%Y-%m-%dT%H:%M:%S.%fZ").timestamp()
