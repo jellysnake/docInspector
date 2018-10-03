@@ -6,7 +6,7 @@ A program made to provide statistical information about google documents and the
 ### Prerequisites
 
 - Python 3.7 or later 
-- Google account with access to file
+- Google account with access to google document
 
 
 ### Installing
@@ -18,8 +18,6 @@ $ git clone https://git.infotech.monash.edu/FIT2101-S2-2018-Scrumbags/docInspect
 $ cd DocInspector
 ```
 
-Drag DocInspector folder into python directory 
-
 Run DocInspector.py from command line 
 
 
@@ -27,6 +25,7 @@ Run DocInspector.py from command line
 
 * [Python 3.7](https://www.python.org/downloads/release/python-370/) - Version used  
 * [Google API V2](https://developers.google.com/drive/api/v2/reference/) - API used
+* ADD LIBRARIES HERE 
 
 
 ## Authors
