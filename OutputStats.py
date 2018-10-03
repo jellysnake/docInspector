@@ -62,24 +62,21 @@ def outputStats(stats: DocStats, args):
     for i in range(num_increments):
         increment = timeline_stats.getIncrement(i)
 
-        additions = increment.additions
-        removals = increment.removals
-        for editor, amount in additions.items():
+        for editor in increment.getEditors():
             file.write(f"""
                     <tr>
                         <td></td>
                         <td>Addition</td>
                         <td>{editor}</td>
-                        <td>{amount}</td>
+                        <td>{increment.getEditor(editor).additions}</td>
                     </tr>
             """)
-        for editor, amount in removals.items():
             file.write(f"""
                     <tr>
                         <td></td>
                         <td>Removal</td>
                         <td>{editor}</td>
-                        <td>{amount}</td>
+                        <td>{increment.getEditor(editor).removals}</td>
                     </tr>
             """)
     file.write("""

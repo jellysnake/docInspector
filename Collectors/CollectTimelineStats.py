@@ -24,6 +24,6 @@ def collectTimelineStats(stats: DocStats, service, args):
         # Check to make sure we don't run out of revisions
         while i < len(rev_meta['items']) and timeToMilli(rev_meta['items'][i]['modifiedDate']) <= currentTime:
             # Add the data from this revision
-            increment.editors.add(rev_meta['items'][i]['lastModifyingUserName'])
+            increment.makeEditor(rev_meta['items'][i]['lastModifyingUserName'])
             i += 1
         currentTime += timeSize
