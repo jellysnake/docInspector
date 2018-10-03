@@ -56,9 +56,9 @@ class IndividualStats:
             self.changes += 1
 
         def mergeIn(self, other: 'IndividualStats.EditorStats'):
-            self.additions = other.additions + (self.additions or 0)
-            self.removals = other.removals + (self.removals or 0)
-            self.changes = other.changes + (self.changes or 0)
+            self.additions = (other.additions or 0) + (self.additions or 0)
+            self.removals = (other.removals or 0) + (self.removals or 0)
+            self.changes = (other.changes or 0) + (self.changes or 0)
 
     def __init__(self, parent):
         self.editors = {}
@@ -119,8 +119,11 @@ class IndividualStats:
         self.total.mergeIn(other.total)
         # Re-calculate percentages
         for editor in self.editors:
-            self.editors[editor].percent = (self.editors[editor].removals + self.editors[editor].additions) \
-                                           / (self.total.additions + self.total.removals)
+            if self.total.additions + self.total.removals != 0:
+                self.editors[editor].percent = (self.editors[editor].removals + self.editors[editor].additions) \
+                                               / (self.total.additions + self.total.removals)
+            else:
+                self.editors[editor].percent = 0
 
 
 class TimelineStats:
