@@ -54,6 +54,7 @@ def getTotalChanges(document, stats: DocStats):
             editor.changes = changes.userChanges(user)
             userSize = editor.additions + editor.removals
             editor.percent = (userSize / totalSize) * 100
+            editor.unsafeId = document.getUser(user).id
 
 
 def getIncrementData(doc: Document, increment, stats):
