@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict, Optional
 
 
 class GeneralStats:
@@ -113,11 +113,16 @@ class TimelineStats:
         """
         return len(self.increments)
 
+    def mergeIn(self, other):
+        pass
+
 
 class IndividualStats:
     """
     Collates all the stats for the individual data section
     """
+    editors: Dict[str, 'IndividualStats.EditorStats']
+    total: 'IndividualStats.EditorStats'
 
     class EditorStats:
         """
@@ -129,6 +134,7 @@ class IndividualStats:
             self.removals = None
             self.changes = None
             self.name = None
+            self.unsafeId = None
             self.percent = None
 
         def addAddition(self, size):
@@ -150,6 +156,11 @@ class IndividualStats:
             """
             self.removals = size
             self.changes += 1
+
+        def mergeIn(self, other: 'IndividualStats.EditorStats'):
+            self.additions = other.additions + (self.additions or 0)
+            self.removals = other.removals + (self.removals or 0)
+            self.changes = other.changes + (self.changes or 0)
 
     def __init__(self):
         self.editors = {}
@@ -187,6 +198,31 @@ class IndividualStats:
         """
         return list(self.editors.keys())
 
+    def findEditorByUnsafe(self, id) -> Optional[str]:
+        for editor in self.editors:
+            if self.editors[editor].unsafeId and self.editors[editor].unsafeId == id:
+                return editor
+        return None
+
+    def mergeIn(self, other: 'IndividualStats'):
+        for editor in other.getEditors():
+            # Find the id of the editor
+            # We try and match by unsafe ID, falling back to general ID.
+            id = editor
+            if other.editors[editor].unsafeId:
+                id = self.findEditorByUnsafe(other.editors[editor].unsafeId)
+            # If the id exists, we merge it. Else we make a new editor and merge that.
+            if id in self.editors:
+                self.editors[editor].mergeIn(other.editors[editor])
+            else:
+                self.makeEditor(editor).mergeIn(other.editors[editor])
+        # Merge total changes
+        self.total.mergeIn(other.total)
+        # Re-calculate percentages
+        for editor in self.editors:
+            self.editors[editor].percent = (self.editors[editor].removals + self.editors[editor].additions) \
+                                           / (self.total.additions + self.total.removals)
+
 
 class DocStats:
     """
@@ -200,3 +236,7 @@ class DocStats:
         self.timeline = TimelineStats(incrementSize)
         self.individuals = IndividualStats()
         self.general = GeneralStats()
+
+    def mergeIn(self, other: 'DocStats'):
+        self.individuals.mergeIn(other.individuals)
+        self.timeline.mergeIn(other.timeline)
