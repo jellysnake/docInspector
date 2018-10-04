@@ -28,10 +28,6 @@ Run DocInspector.py from command line
 * ADD LIBRARIES HERE 
 
 
-+----------+
-|table     |
-+----------+
-
 ## Authors
 
 * **Quinn Roberts**
