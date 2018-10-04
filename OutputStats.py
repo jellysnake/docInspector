@@ -133,8 +133,8 @@ def create_timeline(stats: DocStats, args, lines):
 
         # fill timeline point with addition/removal info
         for editor, amount in changes.items():
-            adds_percent = ceil((amount[0]/sum_adds)*100) if sum_adds != 0 else 100
-            rems_percent = ceil((amount[0]/sum_adds)*100) if sum_rems != 0 else 100
+            adds_percent = ceil((amount[0]/sum_adds)*100) if sum_adds != 0 else 0
+            rems_percent = ceil((amount[1]/sum_rems)*100) if sum_rems != 0 else 0
             lines, edit_index = write_lines([
                 '\t\t\t\t\t\t<tr>',
                 '\t\t\t\t\t\t\t<td width=80%%>%s</td>' % editor,
