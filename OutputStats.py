@@ -35,23 +35,23 @@ def create_general_stats(stats: DocStats, lines):
     :return:        new contents of output html file
     """
 
-    gi = stats.general  # general info
+    g_s = stats.general  # general info
 
     # print title
-    lines = replace_line("<!-- GENERAL STATS TITLE -->", "\t\t<title>%s</title>" % gi.name, lines)
+    lines = replace_line("<!-- GENERAL STATS TITLE -->", "\t\t<title>%s</title>" % g_s.name, lines)
 
     # print doc name
-    lines = replace_line("<!-- GENERAL STATS NAME -->", '       <h1>%s</h1>' % gi.name, lines)
+    lines = replace_line("<!-- GENERAL STATS NAME -->", '\t\t\t\t\t<h1>%s</h1>' % g_s.name, lines)
 
     # print id
-    lines = replace_line("<!-- GENERAL STATS ID -->", '               <td class="gs_td">%s</td>' % gi.id, lines)
+    lines = replace_line("<!-- GENERAL STATS ID -->", '\t\t\t\t\t<td>%s</td>' % g_s.id, lines)
 
     # print creation date
-    creation_date = datetime.strptime(gi.creationDate, "%Y-%m-%dT%H:%M:%S.%fZ").strftime('%d/%m/%Y - %I:%M:%S %p')
-    lines = replace_line("<!-- GENERAL STATS DATE -->", '               <td class="gs_td">%s</td>' % creation_date, lines)
+    creation_date = datetime.strptime(g_s.creationDate, "%Y-%m-%dT%H:%M:%S.%fZ").strftime('%d/%m/%Y - %I:%M:%S %p')
+    lines = replace_line("<!-- GENERAL STATS DATE -->", '\t\t\t\t\t<td>%s</td>' % creation_date, lines)
 
     # print link
-    lines = replace_line("<!-- GENERAL STATS LINK -->", '               <td class="gs_td"><a href="%s">%s</a></td>' % (gi.link, gi.link), lines)
+    lines = replace_line("<!-- GENERAL STATS LINK -->", '\t\t\t\t\t<td><a href="%s">%s</a></td>' % (g_s.link, g_s.link), lines)
 
     return lines
 
@@ -82,8 +82,8 @@ def create_timeline(stats: DocStats, args, lines):
     :return:        new contents of html file
     """
 
-    timeline_stats = stats.timeline
-    num_increments = timeline_stats.getNumIncrements()
+    t_s = stats.timeline
+    num_increments = t_s.getNumIncrements()
 
     # time increment size
     ti = list(map(int, args.timeIncrement.split(':')))
@@ -102,8 +102,8 @@ def create_timeline(stats: DocStats, args, lines):
 
     # fill timeline
     for i in reversed(range(num_increments)):
-        adds = timeline_stats.getIncrement(i).additions
-        rems = timeline_stats.getIncrement(i).removals
+        adds = t_s.getIncrement(i).additions
+        rems = t_s.getIncrement(i).removals
 
         # skip iteration if no changes
         if len(adds) == 0 and len(rems) == 0:
@@ -125,10 +125,10 @@ def create_timeline(stats: DocStats, args, lines):
 
         # create container for timeline point
         lines, edit_index = write_lines([
-            '           <div class="container">',
-            '               <div class="content">',
-            '                   <h2>%s</h2>' % dt.strftime('%d/%m/%Y - %I:%M:%S %p'),
-            '                   <table width=100% cellpadding="0">'
+            '\t\t\t<div class="container">',
+            '\t\t\t\t<div class="content">',
+            '\t\t\t\t\t<h2>%s</h2>' % dt.strftime('%d/%m/%Y - %I:%M:%S %p'),
+            '\t\t\t\t\t<table width=100% cellpadding="0">'
         ], lines, edit_index)
 
         # fill timeline point with addition/removal info
@@ -136,27 +136,63 @@ def create_timeline(stats: DocStats, args, lines):
             adds_percent = ceil((amount[0]/sum_adds)*100) if sum_adds != 0 else 100
             rems_percent = ceil((amount[0]/sum_adds)*100) if sum_rems != 0 else 100
             lines, edit_index = write_lines([
-                "                       <tr>",
-                "                           <td width=80%%>%s</td>" % editor,
-                '                           <td width=10% align="right">',
-                '                               <span class="add_span" style="width:%d%%;">&nbsp</span>' % adds_percent,
-                "                           </td>",
-                '                           <td width=10% align="left">',
-                '                               <span class="rem_span" style="width:%d%%;">&nbsp</span>' % rems_percent,
-                "                           </td>",
-                "                       </tr>",
+                '\t\t\t\t\t\t<tr>',
+                '\t\t\t\t\t\t\t<td width=80%%>%s</td>' % editor,
+                '\t\t\t\t\t\t\t<td width=10% align="right">',
+                '\t\t\t\t\t\t\t\t<span class="add_span" style="width:%d%%;">&nbsp</span>' % adds_percent,
+                '\t\t\t\t\t\t\t</td>',
+                '\t\t\t\t\t\t\t<td width=10% align="left">',
+                '\t\t\t\t\t\t\t\t<span class="rem_span" style="width:%d%%;">&nbsp</span>' % rems_percent,
+                '\t\t\t\t\t\t\t</td>',
+                '\t\t\t\t\t\t</tr>',
             ], lines, edit_index)
 
         # close container
         lines, edit_index = write_lines([
-            '                   </table>',
-            '               </div>',
-            '           </div>',
+            '\t\t\t\t\t</table>',
+            '\t\t\t\t</div>',
+            '\t\t\t</div>',
         ], lines, edit_index)
 
         dt -= ti
 
     return lines
+
+
+def create_individual_stats(stats: DocStats, lines):
+
+    i_s = stats.individuals
+    editors = i_s.getEditors()
+
+    # create additions graph
+    edit_index = lines.index("<!-- ADDITIONS CHART CONTENTS -->")
+    lines.pop(edit_index)
+    for i in editors:
+        editor = i_s.getEditor(i)
+        lines, edit_index = write_lines([
+            "\t\t\t\t\t\t\t\t['%s', %03d]," % (editor.name, editor.additions),
+        ], lines, edit_index)
+
+    # create removals graph
+    edit_index = lines.index("<!-- REMOVALS CHART CONTENTS -->")
+    lines.pop(edit_index)
+    for i in editors:
+        editor = i_s.getEditor(i)
+        lines, edit_index = write_lines([
+            "\t\t\t\t\t\t\t\t['%s', %03d]," % (editor.name, editor.removals),
+        ], lines, edit_index)
+
+    # create percentage graph
+    edit_index = lines.index("<!-- PERCENTAGE CHART CONTENTS -->")
+    lines.pop(edit_index)
+    for i in editors:
+        editor = i_s.getEditor(i)
+        lines, edit_index = write_lines([
+            "\t\t\t\t\t\t\t\t['%s', %03d]," % (editor.name, editor.percent),
+        ], lines, edit_index)
+
+    return lines
+
 
 
 def outputStats(stats: DocStats, args):
@@ -173,8 +209,9 @@ def outputStats(stats: DocStats, args):
     with open(file_path, 'r') as f:
         lines = f.read().splitlines()
 
-    # create general stats, timeline
+    # create general stats, individual stats and timeline
     lines = create_general_stats(stats, lines)
+    lines = create_individual_stats(stats, lines)
     lines = create_timeline(stats, args, lines)
 
     # create file and write contents
