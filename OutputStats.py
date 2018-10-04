@@ -92,8 +92,3 @@ def outputStats(stats: DocStats, args):
 
     file.close()
     open_new(file_path)
-
-
-def timeToMilli(time):
-    return datetime.strptime(time,
-                             "%Y-%m-%dT%H:%M:%S.%fZ").timestamp()
