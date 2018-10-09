@@ -30,7 +30,7 @@ Run DocInspector.py from command line
 
 | Flags |
 | --- |
-|Flag name| Description | 
+| Flag name | Description | 
 | --- | --- |
 | -d | Start and end date range from which statistics will be extracted in the form of "dd-mm-yyyy/dd-mm-yyyy" |
 
