@@ -27,10 +27,15 @@ Run DocInspector.py from command line
 * [Google API V2](https://developers.google.com/drive/api/v2/reference/) - API used
 * ADD LIBRARIES HERE 
 
-|header|
-|------|
-|field1|
-|field2|
+|---------------------------------------------------------------------------------|
+|                                       FLAGS                                     |
+|---------------------------------------------------------------------------------|
+|Flag name|                             Description                               | 
+|---------|-----------------------------------------------------------------------|
+|-d       | Start and end date range from which statistics will be extracted in   |
+|         | the form of "dd-mm-yyyy/dd-mm-yyyy"                                   |
+|---------|-----------------------------------------------------------------------|
+
 
 ## Authors
 
