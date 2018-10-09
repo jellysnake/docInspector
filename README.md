@@ -28,12 +28,13 @@ Run DocInspector.py from command line
 * ADD LIBRARIES HERE 
 
 
-| Flags |
-| --- |
 | Flag name | Description | 
 | --- | --- |
+| fileId | Google document id to be scraped|
 | -d | Start and end date range from which statistics will be extracted in the form of "dd-mm-yyyy/dd-mm-yyyy" |
-
+| -t | Time increment in which changes will be displayed in the format 'd:h:m' |
+| -u | Whether the unsafe API will be used to retrieve more data |
+| -f | Whether a finer level of detail will be used with the unsafe API|
 
 
 
