@@ -28,8 +28,9 @@ Run DocInspector.py from command line
 * ADD LIBRARIES HERE 
 
 
-| Flag name | Description | 
-| --- | --- |
+
+| Flag command | Flag name | Description | 
+| --- | --- | --- |
 | fileId | A valid google document ID from which revision data will be retrieved |
 | -d | The start and end date range from which statistics will be extracted in the format "dd-mm-yyyy/dd-mm-yyyy". Ensure that start and end date are within the range of the documents lifespan |
 | -t | Time increment in which changes will be displayed in the format 'd:h:m'. Only increments that contain recognised changes will be displayed |
