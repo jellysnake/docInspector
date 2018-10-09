@@ -28,12 +28,12 @@ Run DocInspector.py from command line
 * ADD LIBRARIES HERE 
 
 
-|                                       FLAGS                                     |
-| ------------------------------------------------------------------------------- |
-|Flag name|                             Description                               | 
-| ------- | --------------------------------------------------------------------- |
-|-d       | Start and end date range from which statistics will be extracted in   |
-|         | the form of "dd-mm-yyyy/dd-mm-yyyy"                                   |
+| Flags |
+| --- | ---|
+|Flag name| Description | 
+| --- | --- |
+| -d | Start and end date range from which statistics will be extracted in the form of "dd-mm-yyyy/dd-mm-yyyy" |
+
 
 
 
