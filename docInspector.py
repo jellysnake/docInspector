@@ -5,6 +5,7 @@ from typing import List, Optional
 from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
+from oauth2client.contrib import dictionary_storage
 
 from Collectors import *
 from DocStats import DocStats
@@ -55,7 +56,7 @@ def authenticate(scope, args):
     if args.cache:
         store = file.Storage('token.json')
     else:
-        store = client.Storage()
+        store = dictionary_storage.DictionaryStorage({}, 'token')
 
     creds = store.get()
     if not creds or creds.invalid:
