@@ -1,6 +1,8 @@
 from typing import List, Dict, Optional
 from weakref import ref
 
+from Helpers import timeToMilli, calculateTimelineStart
+
 
 class GeneralStats:
     """
@@ -13,6 +15,9 @@ class GeneralStats:
         self.link = ""
         self.creationDate = ""
         self.parent = ref(parent)
+
+    def __repr__(self):
+        return f"{self.name}({self.id}) @ {self.creationDate}"
 
 
 class IndividualStats:
@@ -183,6 +188,68 @@ class TimelineStats:
         :return: how many increments are stored
         """
         return len(self.increments)
+
+    def mergeIn(self, other: 'TimelineStats'):
+        """
+        Merges together two timelines.
+        Takes into account different starting dates.
+        Assumes they have the same increment size
+
+        :param other: The other timeline to merge in
+        """
+        incSize = self.incrementSize
+        selfIncs = list(self.increments)
+        otherIncs = list(other.increments)
+
+        selfStart = self.timelineStart
+        otherStart = other.timelineStart
+        selfEnd = selfStart + len(selfIncs) * incSize
+        otherEnd = otherStart + len(otherIncs) * incSize
+
+        self.increments = []
+
+        isOverlap = selfStart <= otherEnd + incSize / 3 and otherStart <= selfEnd + incSize / 3
+        if isOverlap:
+            # This is the earlier starter
+            if selfStart <= otherStart:
+                currentTime = selfStart
+                while currentTime <= otherStart:
+                    self.increments.append(selfIncs.pop(0))
+                    currentTime += self.incrementSize
+
+            # Other is the earlier starter
+            elif otherStart <= selfStart:
+                currentTime = otherStart
+                while currentTime <= selfStart:
+                    self.increments.append(otherIncs.pop(0))
+                    currentTime += self.incrementSize
+            # Add them all in for the duration of the overlap
+            while otherIncs and selfIncs:
+                inc = otherIncs.pop(0)
+                inc.mergeIn(selfIncs.pop(0))
+                self.increments.append(inc)
+            # One of the two is empty so we add both sequentially
+            while otherIncs:
+                self.increments.append(otherIncs.pop(0))
+            while selfIncs:
+                self.increments.append(selfIncs.pop(0))
+
+        else:
+            if selfStart < otherStart:
+                # Self is the lower one
+                self.increments.extend(selfIncs)
+                diff = round((otherStart - selfEnd) / incSize)
+                self.increments.extend([IndividualStats(self) for _ in range(diff)])
+                self.increments.extend(otherIncs)
+            else:
+                # Other is the lower one
+                self.increments.extend(otherIncs)
+                diff = round((selfStart - otherEnd) / incSize)
+                self.increments.extend([IndividualStats(self) for _ in range(diff)])
+                self.increments.extend(selfIncs)
+
+    def setTimelineStart(self, start):
+        self.timelineStart = calculateTimelineStart(timeToMilli(start), self.incrementSize)
 
 
 class DocStats:
