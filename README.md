@@ -3,6 +3,11 @@
 A program made to provide statistical information about google documents and their revisions
 
 
+### About DocInspector
+
+The DocInspector is a program created to obtain statistical data on changes to google documents and convert it into a form that is easy to read and understand. This can be related to user input to the google document including characters added and removed and also gives information as to which user created each edit of the document. This would be useful in an educational setting where teachers and markers need to see the contribution of each student to a google doc to ensure that the workload has been distributed evenly. Similarly, it could be used in a business setting where managers can see the productivity of each employee through the metrics provided by DocInspector.
+
+
 ### Prerequisites
 
 - Python 3.7 or later 
@@ -25,7 +30,9 @@ Run DocInspector.py from command line
 
 * [Python 3.7](https://www.python.org/downloads/release/python-370/) - Version used  
 * [Google API V2](https://developers.google.com/drive/api/v2/reference/) - API used
-* ADD LIBRARIES HERE 
+* [google-api-python-client] (https://developers.google.com/api-client-library/python/) - Google API library
+* [oauth2client] (https://developers.google.com/api-client-library/python/guide/aaa_oauth) - Google authentication library
+* [httplib2] (https://pypi.org/project/httplib2/) - HTTP library 
 
 
 
