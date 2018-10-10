@@ -133,8 +133,11 @@ class TimelineStats:
     parent: 'DocStats'
 
     def __init__(self, size, parent):
+        days, hours, mins = map(int, size.split(':'))
+        timeSize = (((days * 24) + hours) * 60 + mins) * 60 * 1000
+        self.incrementSize = timeSize
         self.increments = []
-        self.incrementSize = size
+        self.timelineStart = 0
         self.parent = ref(parent)
 
     def getIncrement(self, id) -> IndividualStats:
