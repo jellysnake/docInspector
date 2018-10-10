@@ -28,6 +28,7 @@ class TimelineStats:
             self.removals = {}
             self.changes = {}
             self.editors = set()
+            self.time = None
 
         def isEmpty(self):
             """

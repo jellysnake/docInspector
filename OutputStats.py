@@ -92,23 +92,26 @@ def create_timeline(stats: DocStats, args, lines):
     # start date/time to display (either date/time of last increment or now)
     if args.dates:      # define start date/time
         temp_dates = args.dates.split('/')
-        dt = datetime.strptime(temp_dates[1], '%Y-%m-%d')
-    else:               # if start date/time not given then start from now
-        dt = datetime.now()
+        start_time = datetime.strptime(temp_dates[1], '%Y-%m-%d')
+    else:               # if start date/time not given then start from creation date
+        start_time = datetime.strptime(stats.general.creationDate, "%Y-%m-%dT%H:%M:%S.%fZ")
 
     # find where to fill timeline
     edit_index = lines.index("<!-- TIMELINE CONTENTS -->")
     lines.pop(edit_index)
 
     # fill timeline
-    for i in reversed(range(num_increments)):
-        adds = t_s.getIncrement(i).additions
-        rems = t_s.getIncrement(i).removals
+    for i in range(num_increments):
+        new_index = edit_index
+        inc = t_s.getIncrement(i)
+        adds = inc.additions
+        rems = inc.removals
 
         # skip iteration if no changes
         if len(adds) == 0 and len(rems) == 0:
-            dt -= ti
             continue
+
+        dt = start_time + inc.time * ti
 
         # convert into more suitable format
         changes = {}
@@ -124,18 +127,18 @@ def create_timeline(stats: DocStats, args, lines):
         sum_rems = sum(rems.values())
 
         # create container for timeline point
-        lines, edit_index = write_lines([
+        lines, new_index = write_lines([
             '\t\t\t<div class="container">',
             '\t\t\t\t<div class="content">',
             '\t\t\t\t\t<h2>%s</h2>' % dt.strftime('%d/%m/%Y - %I:%M:%S %p'),
             '\t\t\t\t\t<table width=100% cellpadding="0">'
-        ], lines, edit_index)
+        ], lines, new_index)
 
         # fill timeline point with addition/removal info
         for editor, amount in changes.items():
             adds_percent = ceil((amount[0]/sum_adds)*100) if sum_adds != 0 else 0
             rems_percent = ceil((amount[1]/sum_rems)*100) if sum_rems != 0 else 0
-            lines, edit_index = write_lines([
+            lines, new_index = write_lines([
                 '\t\t\t\t\t\t<tr>',
                 '\t\t\t\t\t\t\t<td width=80%%>%s</td>' % editor,
                 '\t\t\t\t\t\t\t<td width=10% align="right">',
@@ -145,16 +148,14 @@ def create_timeline(stats: DocStats, args, lines):
                 '\t\t\t\t\t\t\t\t<span class="rem_span" style="width:%d%%;">&nbsp</span>' % rems_percent,
                 '\t\t\t\t\t\t\t</td>',
                 '\t\t\t\t\t\t</tr>',
-            ], lines, edit_index)
+            ], lines, new_index)
 
         # close container
-        lines, edit_index = write_lines([
+        lines, new_index = write_lines([
             '\t\t\t\t\t</table>',
             '\t\t\t\t</div>',
             '\t\t\t</div>',
-        ], lines, edit_index)
-
-        dt -= ti
+        ], lines, new_index)
 
     return lines
 
