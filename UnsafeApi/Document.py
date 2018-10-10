@@ -1,5 +1,6 @@
 from typing import List, Dict
 
+from Helpers import calculateTimelineStart
 from .Helpers import UnsafeRequester, User
 from .Revisions import RevisionMetadata, ChangeData
 
@@ -138,7 +139,7 @@ class Document:
         revisions = sorted(self.getRevisionList(),
                            key=lambda x: x.endTime)
         changes = []
-        time = revisions[0].endTime + increment
+        time = calculateTimelineStart(revisions[0].endTime + increment, increment)
         i = 0
         while i < len(revisions):
             changes.append(ChangeData())
@@ -147,4 +148,4 @@ class Document:
                 i += 1
             time += increment
         # Filter out empty increment
-        return {i: changes[i] for i in range(len(changes)) if changes[i].totalChanges() != 0}
+        return changes
