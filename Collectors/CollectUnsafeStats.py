@@ -67,14 +67,17 @@ def getIncrementData(doc: Document, stats):
     """
 
     # Clear out the official data
-    for i in range(stats.timeline.getNumIncrements(), 0):
-        stats.timeline.removeIncrement()
+    for i in range(stats.timeline.getNumIncrements()-1, -1, -1):
+        stats.timeline.removeIncrement(i)
     # Load in the changes from the api
     changes = doc.getChangesInIncrement(stats.timeline.incrementSize)
 
     # Add in the data from each increment
-    for i in changes:
+    for i in range(len(changes)):
         increment = stats.timeline.makeIncrement()
+        totalAdd = 0
+        totalRemove = 0
+        totalChange = 0
         for user in changes[i].getUsers():
             # TODO: This is a hack and we need to handle anonymous users.
             if user != "unknown":
@@ -82,3 +85,11 @@ def getIncrementData(doc: Document, stats):
                 editor.additions = changes[i].userAdditions(user)
                 editor.removals = changes[i].userRemovals(user)
                 editor.changes = changes[i].userChanges(user)
+
+                totalChange += editor.changes
+                totalAdd += editor.additions
+                totalRemove += editor.removals
+
+        increment.total.additions = totalAdd or None
+        increment.total.removals = totalRemove or None
+        increment.total.changes = totalChange or None

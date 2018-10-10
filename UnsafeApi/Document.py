@@ -148,4 +148,4 @@ class Document:
                 i += 1
             time += increment
         # Filter out empty increment
-        return {i: changes[i] for i in range(len(changes)) if changes[i].totalChanges() != 0}
+        return changes

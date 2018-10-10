@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from math import ceil
 from os import mkdir, path
 from webbrowser import open_new
@@ -72,21 +72,17 @@ def write_lines(new_lines, lines, edit_index):
     return lines, edit_index
 
 
-def create_timeline(stats: DocStats, args, lines):
+def create_timeline(stats: DocStats, lines):
     """
     Print the timeline of revisions
 
     :param stats:   DocStats object of doc data
-    :param args:    arguments from commandline
     :param lines:   current contents of output html file
     :return:        new contents of html file
     """
 
     t_s = stats.timeline
     num_increments = t_s.getNumIncrements()
-
-    # time increment size
-    ti = t_s.incrementSize
 
     start_time = t_s.timelineStart
 
@@ -100,10 +96,10 @@ def create_timeline(stats: DocStats, args, lines):
         inc = t_s.getIncrement(i)
 
         # skip iteration if no changes
-        if inc.total is None or inc.total.additions is None:
+        if len(inc.editors) == 0:
             continue
 
-        dt = start_time + (i*t_s.incrementSize)
+        dt = start_time + (i * t_s.incrementSize)
 
         sum_adds = inc.total.additions
         sum_rems = inc.total.removals
@@ -112,15 +108,15 @@ def create_timeline(stats: DocStats, args, lines):
         lines, new_index = write_lines([
             '\t\t\t<div class="container">',
             '\t\t\t\t<div class="content">',
-            '\t\t\t\t\t<h2>%s</h2>' % datetime.fromtimestamp(dt/1000).strftime('%d/%m/%Y - %I:%M:%S %p'),
+            '\t\t\t\t\t<h2>%s</h2>' % datetime.fromtimestamp(dt / 1000).strftime('%d/%m/%Y - %I:%M:%S %p'),
             '\t\t\t\t\t<table width=100% cellpadding="0">'
         ], lines, new_index)
 
         # fill timeline point with addition/removal info
         for editor in inc.getEditors():
             edits = inc.getEditor(editor)
-            adds_percent = ceil((edits.additions / sum_adds) * 100) if sum_adds != 0 else 0
-            rems_percent = ceil((edits.removals / sum_rems) * 100) if sum_rems != 0 else 0
+            adds_percent = ceil((edits.additions / sum_adds) * 100) if sum_adds else 0
+            rems_percent = ceil((edits.removals / sum_rems) * 100) if sum_rems else 0
             lines, new_index = write_lines([
                 '\t\t\t\t\t\t<tr>',
                 '\t\t\t\t\t\t\t<td width=80%%>%s</td>' % editor,
@@ -193,7 +189,7 @@ def outputStats(stats: DocStats, args):
     # create general stats, individual stats and timeline
     lines = create_general_stats(stats, lines)
     lines = create_individual_stats(stats, lines)
-    lines = create_timeline(stats, args, lines)
+    lines = create_timeline(stats, lines)
 
     # create file and write contents
     file_path = path.abspath(OUTPUT_DIR + f_name + ".html")

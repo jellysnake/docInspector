@@ -125,7 +125,7 @@ def main():
             print(fileId)
             fileStats.append(getStatsForFile(service, http, args, fileId))
             globalStats.mergeIn(fileStats[-1])
-
+        globalStats.general.creationDate = fileStats[0].general.creationDate
         # Output Global stats
         outputStats(globalStats, args)
 
