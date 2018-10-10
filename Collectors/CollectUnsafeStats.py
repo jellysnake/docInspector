@@ -86,3 +86,4 @@ def getIncrementData(doc: Document, increment, stats):
                 increment.additions[doc.getUser(user)] = changes[i].userAdditions(user)
                 increment.removals[doc.getUser(user)] = changes[i].userRemovals(user)
                 increment.changes[doc.getUser(user)] = changes[i].userChanges(user)
+                increment.time = i
