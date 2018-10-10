@@ -1,3 +1,4 @@
+import os
 from argparse import ArgumentParser
 
 from googleapiclient.discovery import build
@@ -33,6 +34,9 @@ def parseArguments():
     parser.add_argument('-f, --fine', dest='useFine', action='store_true', default=False,
                         required=False, help='Use a finer level of detail with the unsafe API')
 
+    parser.add_argument('-c, --cache', dest='cache', action='store_true', default=False,
+                        required=False, help='Caches login details to prevent re-authentication.')
+
     return parser.parse_args()
 
 
@@ -45,7 +49,10 @@ def authenticate(scope, args):
     :param args: The arguments passed in to the program.
     :return: (The drive api service, The http requests object)
     """
-    store = file.Storage('token.json')
+    if args.cache:
+        store = file.Storage('token.json')
+    else:
+        store = client.Storage()
     creds = store.get()
     if not creds or creds.invalid:
         flow = client.flow_from_clientsecrets('credentials.json', scope)
@@ -53,7 +60,9 @@ def authenticate(scope, args):
     http = creds.authorize(Http())
     service = build('drive', 'v2', http=http)
 
-    store.delete()
+    if not args.cache and os.path.exists('token.json'):
+        os.remove('token.json')
+
     return service, http
 
 
