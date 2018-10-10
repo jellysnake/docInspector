@@ -14,7 +14,7 @@ def collectUnsafeStats(stats: DocStats, http, args):
     # Make a document (akin to a `service`) and pass it into the child methods
     doc = Document(http, stats.general.id, args.useFine)
     getTotalChanges(doc, stats)
-    getIncrementData(doc, args.timeIncrement, stats)
+    getIncrementData(doc, stats)
 
 
 def getTotalChanges(document, stats: DocStats):
@@ -57,13 +57,12 @@ def getTotalChanges(document, stats: DocStats):
             editor.unsafeId = document.getUser(user).id
 
 
-def getIncrementData(doc: Document, increment, stats):
+def getIncrementData(doc: Document, stats):
     """
     Load in the data from each increment.
     This supplements the data from `CollectTimelineStats.py`
 
     :param doc: The document to make calls with
-    :param increment: The time increment passed to the program
     :param stats: The stats object to store the data in
     """
 

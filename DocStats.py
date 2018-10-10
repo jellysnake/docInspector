@@ -16,9 +16,6 @@ class GeneralStats:
         self.creationDate = ""
         self.parent = ref(parent)
 
-    def __repr__(self):
-        return f"{self.name}({self.id}) @ {self.creationDate}"
-
 
 class IndividualStats:
     """

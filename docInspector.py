@@ -54,6 +54,7 @@ def authenticate(scope, args):
     http = creds.authorize(Http())
     service = build('drive', 'v2', http=http)
 
+    # TODO: Re-add
     # store.delete()
     return service, http
 
