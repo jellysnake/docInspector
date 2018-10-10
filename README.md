@@ -34,7 +34,9 @@ Run DocInspector.py from command line
 * [oauth2client] (https://developers.google.com/api-client-library/python/guide/aaa_oauth) - Google authentication library
 * [httplib2] (https://pypi.org/project/httplib2/) - HTTP library 
 
+### Flags 
 
+DocInspector uses a number of flags to which stats to retrieve and how to retrieve them 
 
 | Flag command |   Flag name   | Description | 
 | --- | --- | --- |
