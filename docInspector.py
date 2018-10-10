@@ -89,6 +89,13 @@ def getStatsForFile(service, http, args, id) -> DocStats:
 
 
 def getFilesInFolder(service, id) -> Optional[List]:
+    """
+    Lists all the id's of the files in a folder
+
+    :param service: The service to request with
+    :param id: The id of the folder
+    :return: The ids of the child files
+    """
     children = service.children().list(folderId=id).execute()
     children = [child['id'] for child in children['items']]
     children = [child for child in children if getMimeType(service, child) == FILE__MIME]
@@ -122,12 +129,15 @@ def main():
         # Do stats for all files
         globalStats = DocStats(args.timeIncrement)
         for fileId in fileIds:
-            print(fileId)
+            print(f"Processing file: {fileId}")
             fileStats.append(getStatsForFile(service, http, args, fileId))
             globalStats.mergeIn(fileStats[-1])
         globalStats.general.creationDate = fileStats[0].general.creationDate
-        # Output Global stats
+        # Output stats
+        print("Outputting data")
         outputStats(globalStats, args)
+        for fileStat in fileStats:
+            outputStats(fileStat, args)
 
     elif itemType == FILE__MIME:
         print("Processing file")
