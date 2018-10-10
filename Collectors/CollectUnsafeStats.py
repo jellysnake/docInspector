@@ -85,6 +85,7 @@ def getIncrementData(doc: Document, stats):
                 editor.additions = changes[i].userAdditions(user)
                 editor.removals = changes[i].userRemovals(user)
                 editor.changes = changes[i].userChanges(user)
+                editor.name = doc.getUser(user).name
 
                 totalChange += editor.changes
                 totalAdd += editor.additions

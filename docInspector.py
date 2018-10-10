@@ -128,6 +128,9 @@ def main():
 
         # Do stats for all files
         globalStats = DocStats(args.timeIncrement)
+        globalStats.general.id = args.fileId
+        collectGeneralStats(globalStats, service)
+
         for fileId in fileIds:
             print(f"Processing file: {fileId}")
             fileStats.append(getStatsForFile(service, http, args, fileId))
