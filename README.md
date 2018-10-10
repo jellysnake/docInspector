@@ -2,19 +2,27 @@
 
 A program made to provide statistical information about google documents and their revisions
 
+## Table of contents 
+* [About DocInspector](#about)
+* [Prerequisites](#prereq)
+* [Installing](#install)
+* [Built With](#built)
+* [Flags](#flags)
+* [Authors](#authors)
+* [Acknowledgments](#acknowledgements)
 
-### About DocInspector
+### About DocInspector <a name="about"></a>
 
 The DocInspector is a program created to obtain statistical data on changes to google documents and convert it into a form that is easy to read and understand. This can be related to user input to the google document including characters added and removed and also gives information as to which user created each edit of the document. This would be useful in an educational setting where teachers and markers need to see the contribution of each student to a google doc to ensure that the workload has been distributed evenly. Similarly, it could be used in a business setting where managers can see the productivity of each employee through the metrics provided by DocInspector.
 
 
-### Prerequisites
+### Prerequisites <a name="prereq"></a>
 
 - Python 3.7 or later 
 - Google account with access to google document
 
 
-### Installing
+### Installing <a name="install"></a>
 
 Clone DocInspector from https://git.infotech.monash.edu/FIT2101-S2-2018-Scrumbags/docInspector.git
 
@@ -26,7 +34,7 @@ $ cd DocInspector
 Run DocInspector.py from command line 
 
 
-## Built With
+## Built With <a name="built"></a>
 
 * [Python 3.7](https://www.python.org/downloads/release/python-370/) - Version used  
 * [Google API V2](https://developers.google.com/drive/api/v2/reference/) - API used
@@ -34,7 +42,7 @@ Run DocInspector.py from command line
 * [oauth2client] (https://developers.google.com/api-client-library/python/guide/aaa_oauth) - Google authentication library
 * [httplib2] (https://pypi.org/project/httplib2/) - HTTP library 
 
-### Flags 
+### Flags <a name="flags"></a>
 
 DocInspector uses a number of flags to which stats to retrieve and how to retrieve them 
 
@@ -47,7 +55,7 @@ DocInspector uses a number of flags to which stats to retrieve and how to retrie
 
 
 
-## Authors
+## Authors <a name="authors"></a>
 
 * **Quinn Roberts**
 * **Simon Schippl**
@@ -55,7 +63,7 @@ DocInspector uses a number of flags to which stats to retrieve and how to retrie
 * **Ganesh Ukwatta**
 
  
-## Acknowledgments
+## Acknowledgments <a name="acknowledgements"></a>
 
 * Robyn McNamara for being a great client
 
