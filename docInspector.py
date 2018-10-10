@@ -33,6 +33,9 @@ def parseArguments():
     parser.add_argument('-f, --fine', dest='useFine', action='store_true', default=False,
                         required=False, help='Use a finer level of detail with the unsafe API')
 
+    parser.add_argument('-c, --cache', dest='cache', action='store_true', default=False,
+                        required=False, help='Caches login details to prevent re-authentication.')
+
     return parser.parse_args()
 
 
