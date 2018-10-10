@@ -1,5 +1,6 @@
 from typing import List, Dict
 
+from Helpers import calculateTimelineStart
 from .Helpers import UnsafeRequester, User
 from .Revisions import RevisionMetadata, ChangeData
 
@@ -47,8 +48,6 @@ class Document:
         self.users = {}
         for userNumber in data['userMap']:
             userData = User(userNumber, data['userMap'][userNumber])
-            # TODO: Remove, debug print
-            print(f"Color '{userData.getId()}' is '{userNumber}'")
             self.users[userData.getId()] = userData
 
     def getRevisionList(self) -> List[RevisionMetadata]:
@@ -140,7 +139,7 @@ class Document:
         revisions = sorted(self.getRevisionList(),
                            key=lambda x: x.endTime)
         changes = []
-        time = revisions[0].endTime + increment
+        time = calculateTimelineStart(revisions[0].endTime + increment, increment)
         i = 0
         while i < len(revisions):
             changes.append(ChangeData())
