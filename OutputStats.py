@@ -106,10 +106,9 @@ def create_timeline(stats: DocStats, args, lines):
         inc = t_s.getIncrement(i)
         adds = inc.additions
         rems = inc.removals
-        total_contribution = adds + rems
 
         # skip iteration if no changes
-        if len(adds) == 0 and len(rems) == 0 and len(total_contribution):
+        if len(adds) == 0 and len(rems) == 0:
             continue
 
         dt = start_time + inc.time * ti
@@ -126,7 +125,6 @@ def create_timeline(stats: DocStats, args, lines):
                 changes.update({k: [0, v]})
         sum_adds = sum(adds.values())
         sum_rems = sum(rems.values())
-        sum_adds_and_rems = sum_adds + sum_rems
 
         # create container for timeline point
         lines, new_index = write_lines([
@@ -140,7 +138,6 @@ def create_timeline(stats: DocStats, args, lines):
         for editor, amount in changes.items():
             adds_percent = ceil((amount[0]/sum_adds)*100) if sum_adds != 0 else 0
             rems_percent = ceil((amount[1]/sum_rems)*100) if sum_rems != 0 else 0
-            sum_adds_and_rems_percent = ceil((amount[2]/sum_adds_and_rems)*100) if sum_adds_and_rems != 0 else 0
             lines, new_index = write_lines([
                 '\t\t\t\t\t\t<tr>',
                 '\t\t\t\t\t\t\t<td width=80%%>%s</td>' % editor,
