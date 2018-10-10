@@ -119,7 +119,7 @@ def create_timeline(stats: DocStats, lines):
             rems_percent = ceil((edits.removals / sum_rems) * 100) if sum_rems else 0
             lines, new_index = write_lines([
                 '\t\t\t\t\t\t<tr>',
-                '\t\t\t\t\t\t\t<td width=80%%>%s</td>' % editor,
+                '\t\t\t\t\t\t\t<td width=80%%>%s</td>' % inc.getEditor(editor).name,
                 '\t\t\t\t\t\t\t<td width=10% align="right">',
                 '\t\t\t\t\t\t\t\t<span class="add_span" style="width:%d%%;">&nbsp</span>' % adds_percent,
                 '\t\t\t\t\t\t\t</td>',
