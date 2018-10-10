@@ -1,4 +1,5 @@
 from datetime import datetime
+from math import floor
 
 
 def timeToMilli(time):
@@ -10,3 +11,13 @@ def timeToMilli(time):
     """
     return datetime.strptime(time,
                              "%Y-%m-%dT%H:%M:%S.%fZ").timestamp()
+
+
+def calculateTimelineStart(start, incrementSize):
+    """
+    Calculates the time to start the first revision at
+    :param start: The current start time
+    :param incrementSize: The size of the increments
+    :return: start, rounded down to the nearest increment
+    """
+    return floor(start / incrementSize) * incrementSize

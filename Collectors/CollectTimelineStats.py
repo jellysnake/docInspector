@@ -1,5 +1,5 @@
 from DocStats import DocStats
-from Helpers import timeToMilli
+from Helpers import timeToMilli, calculateTimelineStart
 
 
 def collectTimelineStats(stats: DocStats, service, args):
@@ -14,7 +14,7 @@ def collectTimelineStats(stats: DocStats, service, args):
     days, hours, mins = map(int, args.timeIncrement.split(':'))
     timeSize = (((days * 24) + hours) * 60 + mins) * 60 * 1000
     rev_meta = service.revisions().list(fileId=stats.general.id).execute()
-    currentTime = timeToMilli(stats.general.creationDate)
+    currentTime = calculateTimelineStart(timeToMilli(stats.general.creationDate), args.timeSize)
 
     i = 0
     # Iterate until we run out of revisions
