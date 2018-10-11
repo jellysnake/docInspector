@@ -167,7 +167,7 @@ def create_individual_stats(stats: DocStats, lines):
     for i in editors:
         editor = i_s.getEditor(i)
         lines, edit_index = write_lines([
-            "\t\t\t\t\t\t\t\t['%s', %03d]," % (editor.name, editor.percent),
+            "\t\t\t\t\t\t\t\t['%s', %03d]," % (editor.name, editor.percent or 0),
         ], lines, edit_index)
 
     return lines
