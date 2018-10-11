@@ -25,7 +25,7 @@ def parseArguments():
                         help='A valid google document ID from which revision data will be retrieved')
 
     parser.add_argument('-d, --dates', dest='dates', action='store', required=False,
-                        help='The start and end date range from which statistics will be extracted in the format "dd-mm-yyyy/dd-mm-yyyy". Ensure that start and end date are within the range of the documents lifespan')
+                        help='The start and end date range from which statistics will be extracted in the format "dd-mm-yyyy/dd-mm-yyyy". Value will default to lifespan of the document if left blank or value entered is outside of document lifespan')
 
     parser.add_argument('-t, --time', dest='timeIncrement', type=str, default='1:0:0',
                         required=False,
@@ -36,10 +36,10 @@ def parseArguments():
                         help='Unsafe API which will gather a larger amount of date from the same date range. Use this to gather more data for each increment of time')
 
     parser.add_argument('-f, --fine', dest='useFine', action='store_true', default=False,
-                        required=False, help='Use a finer level of detail with the unsafe API')
+                        required=False, help='Use a finer level of detail with the unsafe API. This may take a while as large amounts of data are being retrieved')
 
     parser.add_argument('-c, --cache', dest='cache', action='store_true', default=False,
-                        required=False, help='Caches login details to prevent re-authentication.')
+                        required=False, help='Caches login details to prevent re-authentication. Use this to store credentials so that authentication is only prompted once')
 
     return parser.parse_args()
 
