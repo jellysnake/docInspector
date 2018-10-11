@@ -149,7 +149,7 @@ def create_individual_stats(stats: DocStats, lines):
     for i in editors:
         editor = i_s.getEditor(i)
         lines, edit_index = write_lines([
-            "\t\t\t\t\t\t\t\t['%s', %03d]," % (editor.name, editor.additions),
+            "\t\t\t\t\t\t\t\t['%s', %03d]," % (editor.name, editor.additions or 0),
         ], lines, edit_index)
 
     # create removals graph
@@ -158,7 +158,7 @@ def create_individual_stats(stats: DocStats, lines):
     for i in editors:
         editor = i_s.getEditor(i)
         lines, edit_index = write_lines([
-            "\t\t\t\t\t\t\t\t['%s', %03d]," % (editor.name, editor.removals),
+            "\t\t\t\t\t\t\t\t['%s', %03d]," % (editor.name, editor.removals or 0),
         ], lines, edit_index)
 
     # create percentage graph
