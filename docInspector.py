@@ -36,7 +36,7 @@ def parseArguments():
                         help='Unsafe API which will gather a larger amount of date from the same date range. Use this to gather more data for each increment of time')
 
     parser.add_argument('-f, --fine', dest='useFine', action='store_true', default=False,
-                        required=False, help='Use a finer level of detail with the unsafe API')
+                        required=False, help='Use a finer level of detail with the unsafe API. This may take a while as large amounts of data are being retrieved')
 
     parser.add_argument('-c, --cache', dest='cache', action='store_true', default=False,
                         required=False, help='Caches login details to prevent re-authentication.')
