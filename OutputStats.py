@@ -125,12 +125,14 @@ def create_timeline(stats: DocStats, lines):
             lines, new_index = write_lines([
                 '\t\t\t\t\t\t<tr>',
                 '\t\t\t\t\t\t\t<td width=80%%>%s</td>' % inc.getEditor(editor).name,
+                '\t\t\t\t\t\t\t<td align="right">%d</td>' % (edits.additions or 0),
                 '\t\t\t\t\t\t\t<td width=10% align="right">',
                 '\t\t\t\t\t\t\t\t<span class="add_span" style="width:%d%%;">&nbsp</span>' % adds_percent,
                 '\t\t\t\t\t\t\t</td>',
                 '\t\t\t\t\t\t\t<td width=10% align="left">',
                 '\t\t\t\t\t\t\t\t<span class="rem_span" style="width:%d%%;">&nbsp</span>' % rems_percent,
                 '\t\t\t\t\t\t\t</td>',
+                '\t\t\t\t\t\t\t<td align="right">%d</td>' % (edits.removals or 0),
                 '\t\t\t\t\t\t</tr>',
             ], lines, new_index)
 
