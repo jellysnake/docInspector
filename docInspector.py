@@ -25,7 +25,7 @@ def parseArguments():
                         help='A valid google document ID from which revision data will be retrieved')
 
     parser.add_argument('-d, --dates', dest='dates', action='store', required=False,
-                        help='The start and end date range from which statistics will be extracted in the format "dd-mm-yyyy/dd-mm-yyyy". Ensure that start and end date are within the range of the documents lifespan')
+                        help='The start and end date range from which statistics will be extracted in the format "dd-mm-yyyy/dd-mm-yyyy". Value will default to lifespan of the document if left blank or value entered is outside of document lifespan')
 
     parser.add_argument('-t, --time', dest='timeIncrement', type=str, default='1:0:0',
                         required=False,
