@@ -39,7 +39,7 @@ def parseArguments():
                         required=False, help='Use a finer level of detail with the unsafe API. This may take a while as large amounts of data are being retrieved')
 
     parser.add_argument('-c, --cache', dest='cache', action='store_true', default=False,
-                        required=False, help='Caches login details to prevent re-authentication.')
+                        required=False, help='Caches login details to prevent re-authentication. Use this to store credentials so that authentication is only prompted once')
 
     return parser.parse_args()
 
