@@ -42,6 +42,7 @@ Run DocInspector.py from command line
 * [google-api-python-client] (https://developers.google.com/api-client-library/python/) - Google API library
 * [oauth2client] (https://developers.google.com/api-client-library/python/guide/aaa_oauth) - Google authentication library
 * [httplib2] (https://pypi.org/project/httplib2/) - HTTP library 
+* [pytz] (https://pypi.org/project/pytz/) - Timezone library 
 <a name="flags"></a>
 
 ## Flags 
