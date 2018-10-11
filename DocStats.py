@@ -58,6 +58,7 @@ class IndividualStats:
             self.changes += 1
 
         def mergeIn(self, other: 'IndividualStats.EditorStats'):
+            self.name = self.name or other.name
             self.additions = (other.additions or 0) + (self.additions or 0)
             self.removals = (other.removals or 0) + (self.removals or 0)
             self.changes = (other.changes or 0) + (self.changes or 0)
