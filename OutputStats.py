@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from math import ceil
 from os import mkdir, path
 from webbrowser import open_new
@@ -46,7 +46,9 @@ def create_general_stats(stats: DocStats, lines):
     lines = replace_line("<!-- GENERAL STATS ID -->", '\t\t\t\t\t<td>%s</td>' % g_s.id, lines)
 
     # print creation date
-    creation_date = datetime.strptime(g_s.creationDate, "%Y-%m-%dT%H:%M:%S.%fZ").strftime('%d/%m/%Y - %I:%M:%S %p')
+    creation_date = datetime.strptime(g_s.creationDate, "%Y-%m-%dT%H:%M:%S.%fZ").replace(
+        tzinfo=timezone.utc).astimezone(tz=None).strftime(
+        '%d/%m/%Y - %I:%M:%S %p')
     lines = replace_line("<!-- GENERAL STATS DATE -->", '\t\t\t\t\t<td>%s</td>' % creation_date, lines)
 
     # print link
@@ -108,7 +110,10 @@ def create_timeline(stats: DocStats, lines):
         lines, new_index = write_lines([
             '\t\t\t<div class="container">',
             '\t\t\t\t<div class="content">',
-            '\t\t\t\t\t<h2>%s</h2>' % datetime.fromtimestamp(dt / 1000).strftime('%d/%m/%Y - %I:%M:%S %p'),
+            '\t\t\t\t\t<h2>%s</h2>' % datetime.fromtimestamp(dt / 1000)
+                .replace(tzinfo=timezone.utc)
+                .astimezone(tz=None)
+                .strftime('%d/%m/%Y - %I:%M:%S %p'),
             '\t\t\t\t\t<table width=100% cellpadding="0">'
         ], lines, new_index)
 
