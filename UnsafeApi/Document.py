@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List
 
 from Helpers import calculateTimelineStart
 from .Helpers import UnsafeRequester, User
@@ -37,6 +37,9 @@ class Document:
             self.revisions.append(RevisionMetadata(revision, self.requester))
         self.revisions.sort(key=lambda x: x.startId)
 
+        # The first revision is an aggregate of all revisions. We don't want that in our timeline hence we pop it out.
+        self.revisions.pop(0)
+
     def _loadUsers(self, data):
         """
         Internal Function
@@ -55,7 +58,7 @@ class Document:
         Returns a List of all 'major' revisions
         A major revision is one which is either:
             both expandable and unexpanded,
-            or named.
+            and/or named.
 
         :return: A list of all major revisions
         """
@@ -85,7 +88,7 @@ class Document:
         """
         if self.totalChanges is None:
             revisionList = self.getRevisionList()
-            self.totalChanges = revisionList[0].getChanges()
+            self.totalChanges = revisionList[0].getChanges().clone()
             for revision in revisionList[1:]:
                 self.totalChanges.mergeIn(revision.getChanges())
 
@@ -128,7 +131,7 @@ class Document:
                 changes.mergeIn(revisions[i].getChanges())
         return changes
 
-    def getChangesInIncrement(self, increment) -> Dict[int, ChangeData]:
+    def getChangesInIncrement(self, increment) -> List[ChangeData]:
         """
         Aggregates all the changes into set increments
         Filters the increments with no changes in them
