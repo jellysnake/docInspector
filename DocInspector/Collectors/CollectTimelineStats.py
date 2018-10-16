@@ -1,5 +1,5 @@
-from DocStats import DocStats
-from Helpers import calculateTimelineStart, timeToMilli
+from DocInspector.DocStats import DocStats
+from DocInspector.Helpers import calculateTimelineStart, timeToMilli
 
 
 def collectTimelineStats(stats: DocStats, service, args):

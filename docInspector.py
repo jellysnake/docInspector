@@ -7,9 +7,9 @@ from httplib2 import Http
 from oauth2client import file, client, tools
 from oauth2client.contrib import dictionary_storage
 
-from Collectors import *
-from DocStats import DocStats
-from OutputStats import outputStats
+from DocInspector.Collectors import *
+from DocInspector.DocStats import DocStats
+from DocInspector.OutputStats import outputStats
 
 
 def parseArguments():

@@ -1,4 +1,4 @@
-from DocStats import DocStats
+from DocInspector.DocStats import DocStats
 
 
 def collectIndividualStats(stats: DocStats, service, args):

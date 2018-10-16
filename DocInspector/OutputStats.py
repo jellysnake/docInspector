@@ -3,7 +3,7 @@ from math import ceil
 from os import mkdir, path
 from webbrowser import open_new
 
-from DocStats import DocStats
+from DocInspector.DocStats import DocStats
 
 OUTPUT_DIR = "./output/"
 TEMPLATE_FILE = "./templates/doc_template.html"

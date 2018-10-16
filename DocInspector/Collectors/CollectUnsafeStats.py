@@ -1,5 +1,5 @@
-from DocStats import DocStats
-from UnsafeApi import Document
+from DocInspector.DocStats import DocStats
+from DocInspector.UnsafeApi import Document
 
 
 def collectUnsafeStats(stats: DocStats, http, args):
