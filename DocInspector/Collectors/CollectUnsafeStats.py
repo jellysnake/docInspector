@@ -2,17 +2,17 @@ from DocInspector.DocStats import DocStats
 from DocInspector.UnsafeApi import Document
 
 
-def collectUnsafeStats(stats: DocStats, http, args):
+def collectUnsafeStats(stats: DocStats, http, useFine):
     """
     Uses the unsafe api to supplement the stats gathered from the official api
     This is only run if the `-u` flag is passed in
 
     :param stats: The stats object to store the data in
     :param http: The http object to make calls with
-    :param args: The arguments passed to the program
+    :param useFine: Flag that controls if the finer revision level should be used.
     """
     # Make a document (akin to a `service`) and pass it into the child methods
-    doc = Document(http, stats.general.id, args.useFine)
+    doc = Document(http, stats.general.id, useFine)
     getTotalChanges(doc, stats)
     getIncrementData(doc, stats)
 
@@ -67,7 +67,7 @@ def getIncrementData(doc: Document, stats):
     """
 
     # Clear out the official data
-    for i in range(stats.timeline.getNumIncrements()-1, -1, -1):
+    for i in range(stats.timeline.getNumIncrements() - 1, -1, -1):
         stats.timeline.removeIncrement(i)
     # Load in the changes from the api
     changes = doc.getChangesInIncrement(stats.timeline.incrementSize)

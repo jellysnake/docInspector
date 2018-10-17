@@ -8,8 +8,8 @@ from oauth2client import file, client, tools
 from oauth2client.contrib import dictionary_storage
 
 from DocInspector.Collectors import *
-from DocInspector.DocStats import DocStats
-from DocInspector.OutputStats import outputStats
+from DocInspector import DocStats
+from DocInspector import outputStats
 
 
 def parseArguments():
@@ -90,14 +90,14 @@ def getStatsForFile(service, http, args, id) -> DocStats:
     collectGeneralStats(docStats, service)
 
     # Get individual stats
-    collectIndividualStats(docStats, service, args)
+    collectIndividualStats(docStats, service)
 
     #  Get timeline stats
-    collectTimelineStats(docStats, service, args)
+    collectTimelineStats(docStats, service)
 
     if args.isUnsafe:
         # Get unsafe Stats
-        collectUnsafeStats(docStats, http, args)
+        collectUnsafeStats(docStats, http, args.useFine)
     return docStats
 
 
