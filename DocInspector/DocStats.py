@@ -1,7 +1,7 @@
 from typing import List, Dict, Optional
 from weakref import ref
 
-from Helpers import timeToMilli, calculateTimelineStart
+from DocInspector.Helpers import timeToMilli, calculateTimelineStart
 
 
 class GeneralStats:

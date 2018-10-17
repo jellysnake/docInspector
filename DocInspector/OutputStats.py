@@ -3,7 +3,7 @@ from math import ceil
 from os import mkdir, path
 from webbrowser import open_new
 
-from DocStats import DocStats
+from DocInspector.DocStats import DocStats
 
 OUTPUT_DIR = "./output/"
 TEMPLATE_FILE = "./templates/doc_template.html"
@@ -180,7 +180,7 @@ def create_individual_stats(stats: DocStats, lines):
     return lines
 
 
-def outputStats(stats: DocStats, args):
+def outputStats(stats: DocStats):
     f_name = stats.general.name
 
     # create the 'output' directory if it doesn't already exist

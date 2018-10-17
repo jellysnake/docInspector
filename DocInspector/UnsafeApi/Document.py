@@ -1,6 +1,6 @@
 from typing import List
 
-from Helpers import calculateTimelineStart
+from DocInspector.Helpers import calculateTimelineStart
 from .Helpers import UnsafeRequester, User
 from .Revisions import RevisionMetadata, ChangeData
 

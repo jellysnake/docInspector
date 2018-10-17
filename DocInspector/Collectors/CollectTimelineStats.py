@@ -1,8 +1,8 @@
-from DocStats import DocStats
-from Helpers import calculateTimelineStart, timeToMilli
+from DocInspector.DocStats import DocStats
+from DocInspector.Helpers import calculateTimelineStart, timeToMilli
 
 
-def collectTimelineStats(stats: DocStats, service, args):
+def collectTimelineStats(stats: DocStats, service):
     """
     Collects stats for the timeline from the official api.
     At present this is limited to just the last editor in each major revision in each increment
