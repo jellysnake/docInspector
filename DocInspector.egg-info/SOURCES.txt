@@ -1,13 +1,15 @@
 setup.py
 DocInspector/DocStats.py
 DocInspector/Helpers.py
+DocInspector/LoadStats.py
 DocInspector/OutputStats.py
 DocInspector/__init__.py
-DocInspector/tbd.py
+DocInspector/docInspector.py
 DocInspector.egg-info/PKG-INFO
 DocInspector.egg-info/SOURCES.txt
 DocInspector.egg-info/dependency_links.txt
 DocInspector.egg-info/entry_points.txt
+DocInspector.egg-info/requires.txt
 DocInspector.egg-info/top_level.txt
 DocInspector/Collectors/CollectGeneralStats.py
 DocInspector/Collectors/CollectIndividualStats.py
