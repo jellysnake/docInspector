@@ -1,8 +1,8 @@
-from DocInspector.DocStats import DocStats
-from DocInspector.UnsafeApi import Document
+from ..DocStats import DocStats
+from ..UnsafeApi import Document
 
 
-def collectUnsafeStats(stats: DocStats, http, useFine):
+def collectUnsafeStats(stats: DocStats, service, useFine):
     """
     Uses the unsafe api to supplement the stats gathered from the official api
     This is only run if the `-u` flag is passed in
@@ -11,6 +11,7 @@ def collectUnsafeStats(stats: DocStats, http, useFine):
     :param http: The http object to make calls with
     :param useFine: Flag that controls if the finer revision level should be used.
     """
+    http = service._http
     # Make a document (akin to a `service`) and pass it into the child methods
     doc = Document(http, stats.general.id, useFine)
     getTotalChanges(doc, stats)

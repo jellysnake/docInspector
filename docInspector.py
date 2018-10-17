@@ -1,15 +1,27 @@
 import os
 from argparse import ArgumentParser
-from typing import List, Optional
 
 from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
 from oauth2client.contrib import dictionary_storage
 
-from DocInspector.Collectors import *
-from DocInspector import DocStats
-from DocInspector import outputStats
+from DocInspector import outputStats, tryCollectFromId
+
+FOLDER_MIME = "application/vnd.google-apps.folder"
+FILE__MIME = "application/vnd.google-apps.document"
+
+
+def getMimeType(service, id) -> str:
+    """
+    Gets the mime type of a given id
+
+    :param service: The service to use for requesting
+    :param id: The ID of the item to check
+    :return: True if it's a folder. False if it's a file. None if it's neither
+    """
+    data = service.files().get(fileId=id).execute()
+    return data['mimeType'] or ""
 
 
 def parseArguments():
@@ -64,106 +76,29 @@ def authenticate(scope, args):
     if not creds or creds.invalid:
         flow = client.flow_from_clientsecrets('credentials.json', scope)
         creds = tools.run_flow(flow, store, args)
-    http = creds.authorize(Http())
-    service = build('drive', 'v2', http=http)
+    service = build('drive', 'v2', http=creds.authorize(Http()))
 
     if not args.cache and os.path.exists('token.json'):
         os.remove('token.json')
-    return service, http
-
-
-def getStatsForFile(service, http, args, id) -> DocStats:
-    """
-    Calls subfunctions to load in stats for the given file.
-
-    :param service: The service to use for the API requests
-    :param http: The Requests object to use for the other requests
-    :param args: The arguments passed to the program
-    :param id: The ID of the file
-    :return: The DocStats object containing the file's stats
-    """
-    # Build docstats
-    docStats = DocStats(args.timeIncrement)
-    docStats.general.id = id
-
-    # Get general stats
-    collectGeneralStats(docStats, service)
-
-    # Get individual stats
-    collectIndividualStats(docStats, service)
-
-    #  Get timeline stats
-    collectTimelineStats(docStats, service)
-
-    if args.isUnsafe:
-        # Get unsafe Stats
-        collectUnsafeStats(docStats, http, args.useFine)
-    return docStats
-
-
-def getFilesInFolder(service, id) -> Optional[List]:
-    """
-    Lists all the id's of the files in a folder
-
-    :param service: The service to request with
-    :param id: The id of the folder
-    :return: The ids of the child files
-    """
-    children = service.children().list(folderId=id).execute()
-    children = [child['id'] for child in children['items']]
-    children = [child for child in children if getMimeType(service, child) == FILE__MIME]
-    return children
-
-
-def getMimeType(service, id) -> str:
-    """
-    Gets the mime type of a given id
-
-    :param service: The service to use for requesting
-    :param id: The ID of the item to check
-    :return: True if it's a folder. False if it's a file. None if it's neither
-    """
-    data = service.files().get(fileId=id).execute()
-    return data['mimeType'] or ""
+    return service
 
 
 def main():
     args = parseArguments()
-    service, http = authenticate('https://www.googleapis.com/auth/drive'
-                                 if args.isUnsafe else
-                                 'https://www.googleapis.com/auth/drive.metadata.readonly',
-                                 args)
-    itemType = getMimeType(service, args.fileId)
-    if itemType == FOLDER_MIME:
-        print("Processing folder")
-        fileIds = getFilesInFolder(service, args.fileId)
-        fileStats = []
+    service = authenticate('https://www.googleapis.com/auth/drive'
+                           if args.isUnsafe else
+                           'https://www.googleapis.com/auth/drive.metadata.readonly',
+                           args)
 
-        # Do stats for all files
-        globalStats = DocStats(args.timeIncrement)
-        globalStats.general.id = args.fileId
-        collectGeneralStats(globalStats, service)
-
-        for fileId in fileIds:
-            print(f"Processing file: {fileId}")
-            fileStats.append(getStatsForFile(service, http, args, fileId))
-            globalStats.mergeIn(fileStats[-1])
-        globalStats.general.creationDate = fileStats[0].general.creationDate
-        # Output stats
-        print("Outputting data")
-        outputStats(globalStats, args)
+    unsafeLevel = (2 if args.useFine else 1) if args.isUnsafe else 0
+    globalStats, fileStats = tryCollectFromId(args.fileId, service, args.timeIncrement, unsafeLevel)
+    # Output stats
+    print("Outputting data")
+    outputStats(globalStats)
+    if fileStats:
         for fileStat in fileStats:
-            outputStats(fileStat, args)
-
-    elif itemType == FILE__MIME:
-        print("Processing file")
-        docStats = getStatsForFile(service, http, args, args.fileId)
-        outputStats(docStats, args)
-    else:
-        print(f"Unknown file type. '{itemType}'")
+            outputStats(fileStat)
 
 
-FOLDER_MIME = "application/vnd.google-apps.folder"
-FILE__MIME = "application/vnd.google-apps.document"
 if __name__ == '__main__':
     main()

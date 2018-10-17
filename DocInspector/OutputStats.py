@@ -180,7 +180,7 @@ def create_individual_stats(stats: DocStats, lines):
     return lines
 
 
-def outputStats(stats: DocStats, args):
+def outputStats(stats: DocStats):
     f_name = stats.general.name
 
     # create the 'output' directory if it doesn't already exist
