@@ -19,5 +19,7 @@ setup(
         'console_scripts': [
             'DocInspector=DocInspector.docInspector:main'
         ]
-    }
+    },
+    include_package_data=True
+
 )

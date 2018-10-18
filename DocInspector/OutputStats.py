@@ -1,12 +1,11 @@
 from datetime import datetime, timezone
 from math import ceil
-from os import mkdir, path
+from os import path
 from webbrowser import open_new
 
 from DocInspector.DocStats import DocStats
 
-OUTPUT_DIR = "./output/"
-TEMPLATE_FILE = "./templates/doc_template.html"
+folder = path.dirname(__file__)
 
 
 def replace_line(old_line, new_line, lines):
@@ -180,17 +179,10 @@ def create_individual_stats(stats: DocStats, lines):
     return lines
 
 
-def outputStats(stats: DocStats):
+def outputStats(stats: DocStats, outputDir):
     f_name = stats.general.name
-
-    # create the 'output' directory if it doesn't already exist
-    try:
-        mkdir(OUTPUT_DIR)
-    except Exception:
-        pass
-
     # get contents from template
-    file_path = path.abspath(TEMPLATE_FILE)
+    file_path = path.abspath(folder + "/templates/doc_template.html")
     with open(file_path, 'r') as f:
         lines = f.read().splitlines()
     # create general stats, individual stats and timeline
@@ -199,7 +191,7 @@ def outputStats(stats: DocStats):
     lines = create_timeline(stats, lines)
 
     # create file and write contents
-    file_path = path.abspath(OUTPUT_DIR + f_name + ".html")
+    file_path = path.abspath(outputDir + f_name + ".html")
     with open(file_path, 'w') as f:
         for line in lines:
             f.write("%s\n" % line)

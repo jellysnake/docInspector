@@ -10,6 +10,7 @@ from DocInspector import outputStats, tryCollectFromId
 
 FOLDER_MIME = "application/vnd.google-apps.folder"
 FILE__MIME = "application/vnd.google-apps.document"
+folder = os.path.dirname(__file__)
 
 
 def getMimeType(service, id) -> str:
@@ -55,6 +56,7 @@ def parseArguments():
                         required=False,
                         help='Caches login details to prevent re-authentication. Use this to store credentials so that authentication is only prompted once')
 
+    parser.add_argument('-s --save', dest='shouldSave', type=str, default=None, required=False, help="some help")
     return parser.parse_args()
 
 
@@ -68,22 +70,23 @@ def authenticate(scope, args):
     :return: (The drive api service, The http requests object)
     """
     if args.cache:
-        store = file.Storage('token.json')
+        store = file.Storage(folder + '/token.json')
     else:
         store = dictionary_storage.DictionaryStorage({}, 'token')
 
     creds = store.get()
     if not creds or creds.invalid:
-        flow = client.flow_from_clientsecrets('credentials.json', scope)
+        flow = client.flow_from_clientsecrets(folder + '/credentials.json', scope)
         creds = tools.run_flow(flow, store, args)
     service = build('drive', 'v2', http=creds.authorize(Http()))
 
-    if not args.cache and os.path.exists('token.json'):
-        os.remove('token.json')
+    if not args.cache and os.path.exists(folder + '/token.json'):
+        os.remove(folder + '/token.json')
     return service
 
 
 def main():
+    print("Authenticating")
     args = parseArguments()
     service = authenticate('https://www.googleapis.com/auth/drive'
                            if args.isUnsafe else
@@ -94,10 +97,10 @@ def main():
     globalStats, fileStats = tryCollectFromId(args.fileId, service, args.timeIncrement, unsafeLevel)
     # Output stats
     print("Outputting data")
-    outputStats(globalStats)
+    outputStats(globalStats, folder + "/output")
     if fileStats:
         for fileStat in fileStats:
-            outputStats(fileStat)
+            outputStats(fileStat, folder + "/output")
 
 
 if __name__ == '__main__':
