@@ -1,10 +1,12 @@
 from datetime import datetime
+from typing import List, Dict
 
 
 class ChangeData:
     """
     Represents the collated changes made in a revision
     """
+    editors: Dict[str, 'ChangeData.EditorChanges']
 
     class EditorChanges:
         """
@@ -71,6 +73,20 @@ class ChangeData:
             self.removals += other.removals
             self.changes += other.changes
 
+        def clone(self):
+            """
+            Clones this EditorChanges into a new object.
+            This is a shallow copy.
+
+            :return: A shallow clone of this object
+            """
+            clone = ChangeData.EditorChanges()
+            clone.additions = self.additions
+            clone.removals = self.removals
+            clone.changes = self.changes
+            clone.userId = self.userId
+            return clone
+
     def __init__(self, data=None):
         self.editors = {}
         self.total = self.EditorChanges()
@@ -127,7 +143,7 @@ class ChangeData:
             if user in self.editors:
                 self.editors[user].mergeIn(other.editors[user])
             else:
-                self.editors[user] = other.editors[user]
+                self.editors[user] = other.editors[user].clone()
 
     def totalAdditions(self) -> int:
         """
@@ -147,7 +163,7 @@ class ChangeData:
         """
         return self.total.changes
 
-    def getUsers(self) -> list:
+    def getUsers(self) -> List[str]:
         """
         :return: all the users that have edited this revision
         """
@@ -186,6 +202,18 @@ class ChangeData:
         else:
             raise KeyError(f"User {user} did not edit this revision")
 
+    def clone(self):
+        """
+        Clones the change data.
+        This is a deep clone.
+        :return: A deep clone of this object
+        """
+        clone = ChangeData()
+        clone.total = self.total.clone()
+        for editor in self.editors:
+            clone.editors[editor] = self.editors[editor].clone()
+        return clone
+
 
 class RevisionMetadata:
     """
@@ -216,7 +244,7 @@ class RevisionMetadata:
         """
         :return: This revision as a string format
         """
-        return f"'{self.name}' revision @ {datetime.fromtimestamp(1347517370).strftime('%c')}"
+        return f"'{self.name}' revision @ {datetime.fromtimestamp(self.endTime).strftime('%c')}"
 
     def getChanges(self) -> ChangeData:
         """

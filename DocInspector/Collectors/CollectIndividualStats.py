@@ -1,7 +1,7 @@
-from DocStats import DocStats
+from DocInspector.DocStats import DocStats
 
 
-def collectIndividualStats(stats: DocStats, service, args):
+def collectIndividualStats(stats: DocStats, service):
     """
     Loads stats for individual contributions out of the official api.
     This at present only includes an incomplete list of editors
