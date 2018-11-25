@@ -1,16 +1,20 @@
 import os
 from argparse import ArgumentParser
+from typing import Dict, Callable
 
 from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
 from oauth2client.contrib import dictionary_storage
 
-from DocInspector import outputHTML, tryCollectFromId
+from DocInspector import outputHTML, tryCollectFromId, DocStats
 
 FOLDER_MIME = "application/vnd.google-apps.folder"
 FILE__MIME = "application/vnd.google-apps.document"
 folder = os.path.dirname(__file__)
+outputLookup: Dict[str, Callable[[DocStats], str]] = {
+    "html": outputHTML
+}
 
 
 def getMimeType(service, id) -> str:
@@ -63,8 +67,13 @@ def parseArguments():
                              'that authentication is only prompted once')
 
     parser.add_argument('-p --path', dest='path', type=str, required=False, default=None,
-                        help='The full directory path to write the output into. If none is provided defaults to '
-                             'writing it to stout')
+                        help='The file path to write the data to. A new file will be created if none exists. If none '
+                             'is provided defaults to writing it to stdout')
+
+    parser.add_argument('-o --output', dest='output', type=str, choices=outputLookup.keys(), required=False,
+                        default='plain',
+                        help='The format to output the data in. Defaults to plain output. Valid output formats are '
+                             '"html" - A html visual output')
     return parser.parse_args()
 
 
@@ -93,6 +102,26 @@ def authenticate(scope, args):
     return service
 
 
+def writeToFile(data, path=None):
+    """
+    Attempts to write the data to the given file.
+    Creates a new file if none-exists.
+
+    If no path is provided then the data is simply written to stdout
+    :param data:
+    :param path:
+    :return:
+    """
+    if path:
+        # create file and write contents
+        file_path = path.abspath(path)
+        with open(file_path, 'w') as f:
+            f.write(data)
+    else:
+        # print data
+        print(data)
+
+
 def main():
     print("Authenticating")
     args = parseArguments()
@@ -100,15 +129,15 @@ def main():
                            if args.isUnsafe else
                            'https://www.googleapis.com/auth/drive.metadata.readonly',
                            args)
-
+    print("Collecting stats")
     unsafeLevel = (2 if args.useFine else 1) if args.isUnsafe else 0
     globalStats, fileStats = tryCollectFromId(args.fileId, service, args.timeIncrement, unsafeLevel)
     # Output stats
     print("Outputting data")
-    outputHTML(globalStats, folder + "/output")
+    writeToFile(outputLookup[args.output](globalStats), args.path)
     if fileStats:
         for fileStat in fileStats:
-            outputHTML(fileStat, folder + "/output")
+            writeToFile(outputLookup[args.output](fileStat), args.path)
 
 
 if __name__ == '__main__':

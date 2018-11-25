@@ -179,8 +179,7 @@ def create_individual_stats(stats: DocStats, lines):
     return lines
 
 
-def outputHTML(stats: DocStats, outputDir):
-    f_name = stats.general.name
+def outputHTML(stats: DocStats):
     # get contents from template
     file_path = path.abspath(folder + "/templates/doc_template.html")
     with open(file_path, 'r') as f:
@@ -190,11 +189,4 @@ def outputHTML(stats: DocStats, outputDir):
     lines = create_individual_stats(stats, lines)
     lines = create_timeline(stats, lines)
 
-    # create file and write contents
-    file_path = path.abspath(outputDir + f_name + ".html")
-    with open(file_path, 'w') as f:
-        for line in lines:
-            f.write("%s\n" % line)
-
-    # open in browser
-    open_new(file_path)
+    return "\n".join(lines)
