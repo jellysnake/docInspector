@@ -1,7 +1,6 @@
 from datetime import datetime, timezone
 from math import ceil
 from os import path
-from webbrowser import open_new
 
 from DocInspector.DocStats import DocStats
 

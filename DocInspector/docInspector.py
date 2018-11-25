@@ -7,26 +7,15 @@ from httplib2 import Http
 from oauth2client import file, client, tools
 from oauth2client.contrib import dictionary_storage
 
-from DocInspector import outputHTML, tryCollectFromId, DocStats
+from DocInspector import tryCollectFromId, DocStats, outputPlain, outputHTML
 
 FOLDER_MIME = "application/vnd.google-apps.folder"
 FILE__MIME = "application/vnd.google-apps.document"
 folder = os.path.dirname(__file__)
 outputLookup: Dict[str, Callable[[DocStats], str]] = {
-    "html": outputHTML
+    "html": outputHTML,
+    "plain": outputPlain
 }
-
-
-def getMimeType(service, id) -> str:
-    """
-    Gets the mime type of a given id
-
-    :param service: The service to use for requesting
-    :param id: The ID of the item to check
-    :return: True if it's a folder. False if it's a file. None if it's neither
-    """
-    data = service.files().get(fileId=id).execute()
-    return data['mimeType'] or ""
 
 
 def parseArguments():
