@@ -3,9 +3,9 @@ from setuptools import setup, find_packages
 setup(
     name='DocInspector',
     version='0.1.0',
-    author='Quinn Roberts, Simon Schippl, Darcy Trenfield & Ganesh Ukwatt',
-    url='https://git.infotech.monash.edu/FIT2101-S2-2018-Scrumbags',
-    author_email="invalid@invalid.com",
+    author='Quinn A. R. Roberts',
+    url='https://github.com/jellysnake/docInspector',
+    author_email="iamajellysnake@gmail.com",
     license='LICENSE.txt',
     description='A program made to provide statistical information about google documents and their revisions',
     long_description=open('README.md').read(),
