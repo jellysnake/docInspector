@@ -10,7 +10,7 @@ def timeToMilli(time):
     :return: The timestamp in milliseconds
     """
     return datetime.strptime(time,
-                             "%Y-%m-%dT%H:%M:%S.%fZ").timestamp()*1000
+                             "%Y-%m-%dT%H:%M:%S.%fZ").timestamp() * 1000
 
 
 def calculateTimelineStart(start, incrementSize):
