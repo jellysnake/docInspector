@@ -1,4 +1,4 @@
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
 from weakref import ref
 
 from DocInspector.Helpers import timeToMilli, calculateTimelineStart
@@ -133,6 +133,7 @@ class TimelineStats:
     """
     Collates stats calculated for the timeline
     """
+    increments: List[IndividualStats]
     parent: 'DocStats'
 
     def __init__(self, size, parent):
