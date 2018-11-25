@@ -179,7 +179,7 @@ def create_individual_stats(stats: DocStats, lines):
     return lines
 
 
-def outputStats(stats: DocStats, outputDir):
+def outputHTML(stats: DocStats, outputDir):
     f_name = stats.general.name
     # get contents from template
     file_path = path.abspath(folder + "/templates/doc_template.html")

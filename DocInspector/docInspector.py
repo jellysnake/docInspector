@@ -6,7 +6,7 @@ from httplib2 import Http
 from oauth2client import file, client, tools
 from oauth2client.contrib import dictionary_storage
 
-from DocInspector import outputStats, tryCollectFromId
+from DocInspector import outputHTML, tryCollectFromId
 
 FOLDER_MIME = "application/vnd.google-apps.folder"
 FILE__MIME = "application/vnd.google-apps.document"
@@ -38,25 +38,33 @@ def parseArguments():
                         help='A valid google document ID from which revision data will be retrieved')
 
     parser.add_argument('-d, --dates', dest='dates', action='store', required=False,
-                        help='The start and end date range from which statistics will be extracted in the format "dd-mm-yyyy/dd-mm-yyyy". Value will default to lifespan of the document if left blank or value entered is outside of document lifespan')
+                        help='The start and end date range from which statistics will be extracted in the format '
+                             '"dd-mm-yyyy/dd-mm-yyyy". Value will default to lifespan of the document if left blank '
+                             'or value entered is outside of document lifespan')
 
     parser.add_argument('-t, --time', dest='timeIncrement', type=str, default='1:0:0',
                         required=False,
-                        help="Time increment in which changes will be displayed in the format 'd:h:m'. Only increments with recognised changes will be displayed")
+                        help="Time increment in which changes will be displayed in the format 'd:h:m'. Only "
+                             "increments with recognised changes will be displayed")
 
     parser.add_argument('-u, --unsafe', dest='isUnsafe', action='store_true', default=False,
                         required=False,
-                        help='Unsafe API which will gather a larger amount of date from the same date range. Use this to gather more data for each increment of time')
+                        help='Unsafe API which will gather a larger amount of date from the same date range. Use this '
+                             'to gather more data for each increment of time')
 
     parser.add_argument('-f, --fine', dest='useFine', action='store_true', default=False,
                         required=False,
-                        help='Use a finer level of detail with the unsafe API. This may take a while as large amounts of data are being retrieved')
+                        help='Use a finer level of detail with the unsafe API. This may take a while as large amounts '
+                             'of data are being retrieved')
 
     parser.add_argument('-c, --cache', dest='cache', action='store_true', default=False,
                         required=False,
-                        help='Caches login details to prevent re-authentication. Use this to store credentials so that authentication is only prompted once')
+                        help='Caches login details to prevent re-authentication. Use this to store credentials so '
+                             'that authentication is only prompted once')
 
-    parser.add_argument('-s --save', dest='shouldSave', type=str, default=None, required=False, help="some help")
+    parser.add_argument('-p --path', dest='path', type=str, required=False, default=None,
+                        help='The full directory path to write the output into. If none is provided defaults to '
+                             'writing it to stout')
     return parser.parse_args()
 
 
@@ -97,10 +105,10 @@ def main():
     globalStats, fileStats = tryCollectFromId(args.fileId, service, args.timeIncrement, unsafeLevel)
     # Output stats
     print("Outputting data")
-    outputStats(globalStats, folder + "/output")
+    outputHTML(globalStats, folder + "/output")
     if fileStats:
         for fileStat in fileStats:
-            outputStats(fileStat, folder + "/output")
+            outputHTML(fileStat, folder + "/output")
 
 
 if __name__ == '__main__':
