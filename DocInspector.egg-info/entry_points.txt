@@ -1,3 +1,0 @@
-[console_scripts]
-DocInspector = DocInspector.docInspector:main
-
