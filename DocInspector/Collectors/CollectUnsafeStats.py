@@ -82,7 +82,7 @@ def getIncrementData(doc: Document, stats):
         for user in changes[i].getUsers():
             # TODO: This is a hack and we need to handle anonymous users.
             if user != "unknown":
-                editor = increment.makeEditor(doc.getUser(user))
+                editor = increment.makeEditor(user)
                 editor.additions = changes[i].userAdditions(user)
                 editor.removals = changes[i].userRemovals(user)
                 editor.changes = changes[i].userChanges(user)
