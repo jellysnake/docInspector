@@ -1,39 +1,34 @@
 # DocInspector
-
 A program made to provide statistical information about google documents and their revisions
 
 ## Table of contents 
-* [About DocInspector](#about)
-* [Prerequisites](#prereq)
-* [Installing](#install)
-* [Built With](#built)
+* [About DocInspector](#about-docinspector)
+* [Prerequisites](#prerequisites)
+* [Usage](#Usage)
+* [Built With](#built-with)
 * [Flags](#flags)
-* [Authors](#authors)
-* [Acknowledgments](#acknowledgements)
-<a name="about"></a>
+* [Credits](#Credits)
+* [Acknowledgments](#acknowledgments)
 
 ## About DocInspector 
-
 The DocInspector is a program created to obtain statistical data on changes to google documents and convert it into a form that is easy to read and understand. This can be related to user input to the google document including characters added and removed and also gives information as to which user created each edit of the document. This would be useful in an educational setting where teachers and markers need to see the contribution of each student to a google doc to ensure that the workload has been distributed evenly. Similarly, it could be used in a business setting where managers can see the productivity of each employee through the metrics provided by DocInspector.
-<a name="prereq"></a>
 
 ## Prerequisites 
-
 - Python 3.7 or later 
 - Google account with access to google document
-<a name="install"></a>
 
-## Installing 
+## Usage
 
-Clone DocInspector from https://git.infotech.monash.edu/FIT2101-S2-2018-Scrumbags/docInspector.git
+1. Clone this repository.
+2. Install the pip package.
+3. Simply use `DocInspector` on the terminal and pass in the flags as desired.
+4. Profit!
 
 ```
-$ git clone https://git.infotech.monash.edu/FIT2101-S2-2018-Scrumbags/docInspector.git
-$ cd DocInspector
+$ git clone https://github.com/jellysnake/docInspector.git docInspector
+$ cd docInspector
+$ pip install .
 ```
-
-Run DocInspector.py from command line 
-<a name="built"></a>
 
 ## Built With 
 
@@ -43,10 +38,8 @@ Run DocInspector.py from command line
 * [oauth2client] (https://developers.google.com/api-client-library/python/guide/aaa_oauth) - Google authentication library
 * [httplib2] (https://pypi.org/project/httplib2/) - HTTP library 
 * [pytz] (https://pypi.org/project/pytz/) - Timezone library 
-<a name="flags"></a>
 
 ## Flags 
-
 DocInspector uses a number of flags to which stats to retrieve and how to retrieve them 
 
 | Flag command |   Flag name   | Description | 
@@ -56,17 +49,17 @@ DocInspector uses a number of flags to which stats to retrieve and how to retrie
 | -u | --unsafe | Unsafe API which will gather a larger amount of date from the same date range. Use this to gather more data for each increment of time |
 | -f | --fine | Whether a finer level of detail will be used with the unsafe API. May take a while to process as large amounts of data are being retrieved |
 | -c | --cache | Caches login details to prevent re-authentication. Use this to store credentials so that authentication is only prompted once |
-<a name="authors"></a>
 
-## Authors <a name="authors"></a>
+## Credits
+**Current Version**
+* *Quinn Roberts*
 
-* **Quinn Roberts**
-* **Simon Schippl**
-* **Darcy Trenfield**
-* **Ganesh Ukwatta**
-<a name="acknowledgements"></a>
+**Initial Version**
+* *Quinn Roberts*
+* *Simon Schippl*
+* *Darcy Trenfield*
+* *Ganesh Ukwatta*
  
 ## Acknowledgments 
-
-* Robyn McNamara for being a great client
+* Robyn McNamara of Monash Univeristy, the initial  client
 
