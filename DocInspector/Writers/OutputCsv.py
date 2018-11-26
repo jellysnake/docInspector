@@ -12,7 +12,12 @@ def outputGenerals(stats: DocStats) -> List[str]:
 
 
 def outputIndividuals(stats: DocStats) -> List[str]:
-    return []
+    output = ["Individual Stats"
+              "Name, Additions, Removals, Changes, Percent"]
+    for editorId in stats.individuals.getEditors():
+        editor = stats.individuals.getEditor(editorId)
+        output.append(f"{editor.name}, {editor.additions}, {editor.removals}, {editor.changes}, {editor.percent}")
+    return output + [""]
 
 
 def outputTimeline(stats: DocStats) -> List[str]:
