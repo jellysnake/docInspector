@@ -33,7 +33,7 @@ def getEditorStat(stats: DocStats, attribute: str) -> List[str]:
     :param attribute: The attribute to collate
     :return: A list of that attribute for each editor
     """
-    editors = map(lambda editor: str(editor.__dict__[attribute]) or "N/A", stats.individuals.editors.values())
+    editors = map(lambda editor: str(editor.__dict__[attribute] or "N/A"), stats.individuals.editors.values())
     return list(editors)
 
 
@@ -161,11 +161,9 @@ def loadFromIncrements(stats: DocStats):
                 if editor in increment.editors:
                     # Append the data or N/A if it's None
                     editorAdditions[editor].append(
-                        ("+" + str(increment.editors[editor].additions))
-                        or "N/A")
+                        ("+" + str(increment.editors[editor].additions) or "N/A"))
                     editorRemovals[editor].append(
-                        ("-" + str(increment.editors[editor].removals))
-                        or "N/A")
+                        ("-" + str(increment.editors[editor].removals) or "N/A"))
                 else:
                     # Editor did nothing, so make them blank
                     editorAdditions[editor].append("")
