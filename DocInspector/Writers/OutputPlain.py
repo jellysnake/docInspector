@@ -149,8 +149,10 @@ def loadFromIncrements(stats: DocStats):
 
     # Collect the data from increments
     time = stats.timeline.timelineStart
+    priorBlank = False
     for increment in stats.timeline.increments:
         if len(increment.editors):
+            priorBlank = False
             # Append the date
             dates.append(datetime.fromtimestamp(time / 1000)
                          .replace(tzinfo=timezone.utc)
@@ -168,7 +170,8 @@ def loadFromIncrements(stats: DocStats):
                     # Editor did nothing, so make them blank
                     editorAdditions[editor].append("")
                     editorRemovals[editor].append("")
-        else:
+        elif not priorBlank:
+            priorBlank = True
             # Nothing happened so make them blank
             dates.append("")
             for editor in editorIds:
@@ -228,19 +231,13 @@ def buildTimelineTable(dates, editorIds, editorAdditions, editorRemovals, editor
         output.append(buildRowBorder("/", "/", "/", "═", dateWidth, editorWidths, editorIds))
 
     # Build the entries
-    blankAdded = False
     for i in range(len(dates)):
         if dates[i]:
             # Add the additions
             output.extend(
                 buildEntry(i, dates, editorIds, editorAdditions, editorRemovals, dateWidth, editorWidths))
-
-            # Reset the blank counter
-            blankAdded = False
-
-        elif not blankAdded:
+        else:
             # Insert a blank entry marker
-            blankAdded = True
             if i != 0:
                 output.append(buildRowBorder("/", "/", "/", "─", dateWidth, editorWidths, editorIds))
             output.append(buildRowBorder("┆", "┆", "┆", " ", dateWidth, editorWidths, editorIds))
