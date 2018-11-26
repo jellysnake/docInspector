@@ -5,6 +5,11 @@ from DocInspector.DocStats import DocStats
 
 
 def outputGenerals(stats: DocStats):
+    """
+    Create the general file section of the stats
+    :param stats: The stats to use to build the general section
+    :return: A list containing each line of the output
+    """
     return ["--- General Stats ---",
             f"Name:           {stats.general.name}",
             f"Creation Date:  {stats.general.creationDate}",
@@ -13,15 +18,31 @@ def outputGenerals(stats: DocStats):
 
 
 def findMaxWidth(array: Iterable[str]) -> int:
+    """
+    Find the longest string in a given list
+    :param array: The list to search through
+    :return: The length of the longest string in the list
+    """
     return len(max(array, key=len))
 
 
 def getEditorStat(stats: DocStats, attribute: str) -> List[str]:
+    """
+    Get a given stat from all the editors
+    :param stats: The stats object containing the editors to seach through
+    :param attribute: The attribute to collate
+    :return: A list of that attribute for each editor
+    """
     editors = map(lambda editor: str(editor.__dict__[attribute]) or "N/A", stats.individuals.editors.values())
     return list(editors)
 
 
 def outputIndividual(stats: DocStats):
+    """
+    Create the individual section of the stats
+    :param stats: The stats to use to build the individual table
+    :return: A list containing each line of the output
+    """
     editors = getEditorStat(stats, "name")
     editorWidth = findMaxWidth(editors + ["Name"])
     additions = getEditorStat(stats, "additions")
@@ -59,7 +80,18 @@ def outputIndividual(stats: DocStats):
     return output + [""]
 
 
-def buildEntry(i, dates, dateWidth, editorAdditions, editorRemovals, editorWidths, editorIds):
+def buildEntry(i, dates, editorIds, editorAdditions, editorRemovals, dateWidth, editorWidths):
+    """
+    Build a row entry for an increment
+    :param i: The increment number
+    :param dates: All the dates of increments
+    :param editorIds: The id's of each editor
+    :param editorAdditions: The number of additions, per editor, per increment
+    :param editorRemovals: The number of removals, per editor, per increment
+    :param dateWidth: The width of the date column
+    :param editorWidths: The width of each editors column
+    :return: The two lines that make up this increment's row
+    """
     # Add the additions
     date, time = dates[i].split('\n')
     additions = "│ {0: ^{1}} ".format(date, dateWidth)
@@ -81,17 +113,34 @@ def buildEntry(i, dates, dateWidth, editorAdditions, editorRemovals, editorWidth
         last += "┤"
         return [additions, removals, last]
     else:
-        return [additions, removals]
+        return additions, removals
 
 
 def buildRowBorder(start, middle, end, spacer, dateWidth, editorWidths, editorIds):
+    """
+    Create a row border line.
+    :param start: The character to use at the start
+    :param middle: The character to use for each middle column
+    :param end: The character to use at the end
+    :param spacer: The character to use for each cell ceiling/floor
+    :param dateWidth: The width of the date column
+    :param editorWidths: The width of each editors column
+    :param editorIds: The ids of each editor
+    :return:
+    """
     line = start + spacer * (dateWidth + 2)
     for editor in editorIds:
         line += middle + spacer * (editorWidths[editor] + 2)
     return line + end
 
 
-def loadFromIncrements(stats):
+def loadFromIncrements(stats: DocStats):
+    """
+    Converts the stats from the DocStats format into something more suited for being turned into a timeline
+
+    :param stats: The stats to use to build the timeline
+    :return: Multiple lists containing collated data for each column
+    """
     editorIds = stats.individuals.editors.keys()
     dates = []
     editorAdditions = {id: [] for id in editorIds}
@@ -132,6 +181,15 @@ def loadFromIncrements(stats):
 
 
 def calculateWidths(dates, editorIds, editorAdditions, editorRemovals, editorNames):
+    """
+    Calculate the width of the columns based on the data they will contain
+    :param dates: All the dates of increments
+    :param editorIds: The id's of each editor
+    :param editorAdditions: The number of additions, per editor, per increment
+    :param editorRemovals: The number of removals, per editor, per increment
+    :param editorNames: The names of each editor
+    :return: The width of the dates column and the width of each editor's column
+    """
     dateWidth = findMaxWidth(
         [date.split('\n')[0] for date in dates if date]
         + [date.split('\n')[1] for date in dates if date]
@@ -147,6 +205,17 @@ def calculateWidths(dates, editorIds, editorAdditions, editorRemovals, editorNam
 
 
 def buildTimelineTable(dates, editorIds, editorAdditions, editorRemovals, editorNames, dateWidth, editorWidths):
+    """
+    Build the visual timeline given the stats to include
+    :param dates: All the dates of increments
+    :param editorIds: The id's of each editor
+    :param editorAdditions: The number of additions, per editor, per increment
+    :param editorRemovals: The number of removals, per editor, per increment
+    :param editorNames: The names of each editor
+    :param dateWidth: The width of the dates column, in characters
+    :param editorWidths:  THe width of each editor's column, in characters
+    :return:
+    """
     output = ["--- Timeline Stats ---",
               buildRowBorder("┌", "┬", "┐", "─", dateWidth, editorWidths, editorIds)]
 
@@ -166,7 +235,7 @@ def buildTimelineTable(dates, editorIds, editorAdditions, editorRemovals, editor
         if dates[i]:
             # Add the additions
             output.extend(
-                buildEntry(i, dates, dateWidth, editorAdditions, editorRemovals, editorWidths, editorIds))
+                buildEntry(i, dates, editorIds, editorAdditions, editorRemovals, dateWidth, editorWidths))
 
             # Reset the blank counter
             blankAdded = False
@@ -186,6 +255,11 @@ def buildTimelineTable(dates, editorIds, editorAdditions, editorRemovals, editor
 
 
 def outputTimeline(stats: DocStats):
+    """
+    Create the timeline section of the stats
+    :param stats: The stats to use to build the timeline
+    :return: A list containing each line of the output
+    """
     incrementStats = list(loadFromIncrements(stats))
     return buildTimelineTable(*(
             incrementStats
@@ -193,6 +267,11 @@ def outputTimeline(stats: DocStats):
 
 
 def outputPlain(stats: DocStats):
+    """
+    Convert the stats collected into a plain visual format.
+    :param stats: The stats to output
+    :return: A string that contains the data in plain format
+    """
     output = []
 
     output.extend(outputGenerals(stats))
