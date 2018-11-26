@@ -4,7 +4,11 @@ from DocInspector.DocStats import DocStats
 
 
 def outputGenerals(stats: DocStats) -> List[str]:
-    ...
+    return ["General Stats",
+            f"Name, {stats.general.name}",
+            f"Creation Date, {stats.general.creationDate}",
+            f"Link, https://docs.google.com/document/d/{stats.general.id}/view",
+            ""]
 
 
 def outputIndividuals(stats: DocStats) -> List[str]:
