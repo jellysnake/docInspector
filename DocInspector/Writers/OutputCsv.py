@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from typing import List
 
 from DocInspector.DocStats import DocStats
@@ -21,7 +22,37 @@ def outputIndividuals(stats: DocStats) -> List[str]:
 
 
 def outputTimeline(stats: DocStats) -> List[str]:
-    return []
+    editorIds = stats.individuals.getEditors()
+    output = ["Timeline Stats"
+              f"Additions,{','*len(editorIds)},Removals"]
+    additionLine = "Date, "
+    removalLine = "Date, "
+    for editor in editorIds:
+        additionLine += stats.individuals.editors[editor].name + ","
+        removalLine += stats.individuals.editors[editor].name + ","
+    output.append(additionLine + "," + removalLine)
+
+    time = stats.timeline.timelineStart
+    for increment in stats.timeline.increments:
+        # Add the increment date
+        additionLine = datetime.fromtimestamp(time / 1000) \
+                           .replace(tzinfo=timezone.utc) \
+                           .astimezone(tz=None) \
+                           .strftime('%d/%m/%Y - %I:%M:%S %p') \
+                       + ","
+        removalLine = str(additionLine)  # We want a copy not the same
+        # Add each editor's additions
+        for editor in editorIds:
+            if editor in increment.editors:
+                additionLine += str(increment.editors[editor].additions or "") + ","
+                removalLine += str(increment.editors[editor].removals or "") + ","
+            else:
+                additionLine += ","
+                removalLine += ","
+        output.append(removalLine + "," + removalLine)
+        time += stats.timeline.incrementSize
+
+    return output
 
 
 def outputCsv(stats: DocStats) -> str:
