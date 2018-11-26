@@ -1,5 +1,6 @@
 import os
 from argparse import ArgumentParser
+from os import path
 from typing import Dict, Callable
 
 from googleapiclient.discovery import build
@@ -91,7 +92,7 @@ def authenticate(scope, args):
     return service
 
 
-def writeToFile(data, path=None):
+def writeToFile(data, file_path=None):
     """
     Attempts to write the data to the given file.
     Creates a new file if none-exists.
@@ -101,10 +102,10 @@ def writeToFile(data, path=None):
     :param path:
     :return:
     """
-    if path:
+    if file_path:
         # create file and write contents
-        file_path = path.abspath(path)
-        with open(file_path, 'w') as f:
+        file_path = path.abspath(file_path)
+        with open(file_path, 'w', encoding='utf8') as f:
             f.write(data)
     else:
         # print data
