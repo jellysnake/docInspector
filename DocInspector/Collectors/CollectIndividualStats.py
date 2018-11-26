@@ -21,4 +21,4 @@ def collectIndividualStats(stats: DocStats, service):
 
     # Insert editors
     for editor in editors:
-        stats.individuals.makeEditor(editor)
+        stats.individuals.makeEditor(editor).name = editor
