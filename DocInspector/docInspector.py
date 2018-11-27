@@ -8,13 +8,14 @@ from httplib2 import Http
 from oauth2client import file, client, tools
 from oauth2client.contrib import dictionary_storage
 
-from DocInspector import tryCollectFromId, DocStats, outputPlain, outputHTML
+from DocInspector import tryCollectFromId, DocStats, outputPlain, outputHTML, outputCsv
 
 FOLDER_MIME = "application/vnd.google-apps.folder"
 FILE__MIME = "application/vnd.google-apps.document"
 folder = os.path.dirname(__file__)
 outputLookup: Dict[str, Callable[[DocStats], str]] = {
     "html": outputHTML,
+    "csv": outputCsv,
     "plain": outputPlain
 }
 
