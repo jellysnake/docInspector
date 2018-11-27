@@ -5,6 +5,11 @@ from DocInspector.DocStats import DocStats
 
 
 def outputGenerals(stats: DocStats) -> List[str]:
+    """
+    Create the general stats in a csv format
+    :param stats: The stats to convert
+    :return: The general stats in a csv format
+    """
     return ["General Stats",
             f"Name, {stats.general.name}",
             f"Creation Date, {stats.general.creationDate}",
@@ -13,8 +18,16 @@ def outputGenerals(stats: DocStats) -> List[str]:
 
 
 def outputIndividuals(stats: DocStats) -> List[str]:
+    """
+    Create the individual stats table
+    :param stats: The source of the stats to use
+    :return: The individual stats ina  csv format
+    """
+    # Create the header rows
     output = ["Individual Stats"
               "Name, Additions, Removals, Changes, Percent"]
+
+    # Create a row for each editor
     for editorId in stats.individuals.getEditors():
         editor = stats.individuals.getEditor(editorId)
         output.append(f"{editor.name}, {editor.additions}, {editor.removals}, {editor.changes}, {editor.percent}")
@@ -22,7 +35,16 @@ def outputIndividuals(stats: DocStats) -> List[str]:
 
 
 def outputTimeline(stats: DocStats) -> List[str]:
+    """
+    Creates the timeline for all increments.
+    This does not cull increments where nothing happened.
+
+    :param stats: The stats to use for the timeline
+    :return: The timeline in csv format
+    """
     editorIds = stats.individuals.getEditors()
+
+    # Create the header rows
     output = ["Timeline Stats"
               f"Additions,{','*len(editorIds)},Removals"]
     additionLine = "Date, "
@@ -32,6 +54,7 @@ def outputTimeline(stats: DocStats) -> List[str]:
         removalLine += stats.individuals.editors[editor].name + ","
     output.append(additionLine + "," + removalLine)
 
+    # Create the timeline rows
     time = stats.timeline.timelineStart
     for increment in stats.timeline.increments:
         # Add the increment date
@@ -56,6 +79,11 @@ def outputTimeline(stats: DocStats) -> List[str]:
 
 
 def outputCsv(stats: DocStats) -> str:
+    """
+    Convert the stats provided into a csv representation of them.
+    :param stats: The stats to convert
+    :return: A string of all the stats in CSV format
+    """
     output = []
 
     output.extend(outputGenerals(stats))
