@@ -1,6 +1,9 @@
 from datetime import datetime, timezone
+from os import path
 
 from DocInspector.DocStats import DocStats
+
+folder = path.dirname(__file__) + "/templates/"
 
 
 def getHeaderTemplate(doc, stats: DocStats):
@@ -8,100 +11,8 @@ def getHeaderTemplate(doc, stats: DocStats):
     with tag("head"):
         line("title", stats.general.name)
         with tag("style"):
-            doc.asis("* {"
-                     "  box-sizing: border-box;"
-                     "}")
-            doc.asis("body {"
-                     " background-color: #474e5d;"
-                     " font-family: Helvetica, sans-serif;"
-                     "}")
-            # Stats
-            doc.asis(".stats {"
-                     "  position: fixed;"
-                     "  left: 20px;"
-                     "  width: 61%;"
-                     "}")
-
-            # Container for each stat
-            doc.asis(".stat_container {"
-                     "  padding: 10px 0px 10px 0px;"
-                     "  position: relative;"
-                     "  background-color: inherit;"
-                     "  width: 100%;"
-                     "}")
-
-            # Content for each stat
-            doc.asis(".stat_content {"
-                     "  padding: 20px 30px;"
-                     "  background-color: white;"
-                     "  position: relative;"
-                     "  border-radius: 6px;"
-                     "}")
-
-            # td element in Stats container
-            doc.asis("table.general_stats_table td {"
-                     "  padding: 0px 20px 10px 0px;"
-                     "  word-break: break-word;"
-                     "}")
-
-            # The timeline container
-            doc.asis(".timeline {"
-                     "  position: absolute;"
-                     "  right: 10px;"
-                     "  width: 40%;"
-                     "  margin: 0 auto;"
-                     "}")
-            # The actual timeline (the vertical ruler)
-            doc.asis(".timeline::after {"
-                     "  content: '';"
-                     "  position: absolute;"
-                     "  width: 6px;"
-                     "  background-color: white;"
-                     "  top: -10px;"
-                     "  bottom: -1px;"
-                     "  right: 4.8%;"
-                     "}")
-            # Add arrows to the left container (pointing right)
-            doc.asis(".container::before {"
-                     "  content: " ";"
-                     "  height: 0;"
-                     "  position: absolute;"
-                     "  top: 22px;"
-                     "  width: 0;"
-                     "  z-index: 1;"
-                     "  right: 30px;"
-                     "  border: medium solid white;"
-                     "  border-width: 10px 0 10px 10px;"
-                     "  border-color: transparent transparent transparent white;"
-                     "}")
-            # Container around content
-            doc.asis(".container {"
-                     "  padding: 10px 40px;"
-                     "  position: relative;"
-                     "  background-color: inherit;"
-                     "  width: 90%;"
-                     "  right: -4.7%;"
-                     "}")
-            # The circles on the timeline
-            doc.asis(".container::after {"
-                     "  content: '';"
-                     "  position: absolute;"
-                     "  width: 25px;"
-                     "  height: 25px;"
-                     "  right: -17px;"
-                     "  background-color: white;"
-                     "  border: 4px solid #FF9F55;"
-                     "  top: 15px;"
-                     "  border-radius: 50%;"
-                     "  z-index: 1;"
-                     "}")
-            # The actual content
-            doc.asis(".content {"
-                     "  padding: 20px 30px;"
-                     "  background-color: white;"
-                     "  position: relative;"
-                     "  border-radius: 6px;"
-                     "}")
+            with open(path.abspath(folder + "style.css"), 'r') as file:
+                doc.asis(file.read())
     return doc
 
 
