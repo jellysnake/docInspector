@@ -120,7 +120,7 @@ def getGeneralStats(doc, stats: DocStats):
     doc, tag, text, line = doc.ttl()
     # Doc name
     with tag("div", klass="stat_container"):
-        with tag("div",  klass="stat_content"):
+        with tag("div", klass="stat_content"):
             line("h1", stats.general.name)
 
     # General Stat Info
@@ -212,41 +212,57 @@ def getChartScript(attribute: str, doc, stats: DocStats):
 
 def getTimelineStats(doc, stats: DocStats):
     doc, tag, text, line = doc.ttl()
-    start_time = stats.timeline.timelineStart
+    time = stats.timeline.timelineStart
+    editors = stats.individuals.getEditors()
+    total = 0
 
-    with tag("div", klass="timeline"):
-        for i in range(stats.timeline.getNumIncrements()):
-            increment = stats.timeline.getIncrement(i)
-            if len(increment.editors) == 0:
-                continue
-            dt = start_time + (i * stats.timeline.incrementSize)
-            with tag("div", klass="container"):
-                with tag("div", klass="content"):
-                    line("h2", datetime.fromtimestamp(dt / 1000)
-                         .replace(tzinfo=timezone.utc)
-                         .astimezone(tz=None)
-                         .strftime('%d/%m/%Y - %I:%M:%S %p'))
-                    with tag("table", width="100%", cellpadding="0"):
-                        for editorId in increment.getEditors():
-                            doc = getEditorEntry(doc, increment, editorId)
-    return doc
+    with tag("div", klass="timeline", id="timeline_div"):
+        incrementLines = []
+        for increment in stats.timeline.increments:
+            row = f"[new Date({time}), {str(total)}"
+            time += stats.timeline.incrementSize
+            if increment.editors:
+                for editor in editors:
+                    if editor in increment.editors:
+                        row += "," + str(increment.getEditor(editor).additions or 0)
+                    else:
+                        row += ",0 "
+                for editor in editors:
+                    if editor in increment.editors:
+                        row += "," + str(-1 * increment.getEditor(editor).removals or 0)
+                    else:
+                        row += ",0 "
+            else:
+                row += ",0" * len(editors) * 2
+            total += (increment.total.additions or 0) - (increment.total.removals or 0)
+            incrementLines.append(row + "],")
 
-
-def getEditorEntry(doc, increment, editorId):
-    doc, tag, text, line = doc.ttl()
-    editor = increment.getEditor(editorId)
-    adds_percent = ceil(((editor.additions / increment.total.additions) * 100)
-                        if increment.total.additions
-                        else 0)
-    rems_percent = ceil(((editor.removals / increment.total.removals) * 100)
-                        if increment.total.removals
-                        else 0)
-    with tag("tr"):
-        line("td", editor.name, width="80%")
-        line("td", editor.additions or 0, align="right")
-        with tag("td", width="10%", align="right"):
-            line("span", "", klass="add_span", style=f"width:{adds_percent}%;")
-        with tag("td", width="10%", align="left"):
-            line("span", "", klass="rem_span", style=f"width:{rems_percent}%;")
-        line("td", editor.removals or 0, align="right")
+        editorNames = ", ".join([f"'{stats.individuals.getEditor(editorId).name}'" for editorId in editors])
+        incrementLines = "\n".join(incrementLines)
+        with tag("script", type="text/javascript"):
+            doc.asis(f"""google.charts.load("current", {{packages: ["corechart"]}});
+                google.charts.setOnLoadCallback(drawChart);
+    
+                function drawChart() {{
+                    var data = google.visualization.arrayToDataTable([
+                        ['Date', "Total Count", {editorNames + "," + editorNames}],
+                        {incrementLines}
+                        ]);
+                    var options = {{
+                        title: "Changes",
+                        colors: ['grey', 'red', 'green', 'blue', 'pink', 'red', 'green', 'blue', 'pink'],
+                        vAxis: {{title: 'Date', direction: -1}},
+                        hAxis: {{title: "Characters Edited"}},
+                        isStacked: true,
+                        animation: {{startup: true, duration: 700}},
+                        orientation: "vertical",
+                        series:{{ 0: {{type: 'steppedArea'}}}},
+                        height: 25 * {len(stats.timeline.increments)},
+                        seriesType: 'bars',
+                        explorer: {{keepInBounds: true, axis: "horizontal"}}
+                    }};
+            
+                    var chart = new google.visualization.ComboChart(document.getElementById("timeline_div"));
+                    chart.draw(data, options);
+                }}""")
     return doc
