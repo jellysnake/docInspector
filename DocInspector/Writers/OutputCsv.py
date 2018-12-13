@@ -72,7 +72,7 @@ def outputTimeline(stats: DocStats) -> List[str]:
             else:
                 additionLine += ","
                 removalLine += ","
-        output.append(removalLine + "," + removalLine)
+        output.append(additionLine + "," + removalLine)
         time += stats.timeline.incrementSize
 
     return output
