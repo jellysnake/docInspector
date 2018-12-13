@@ -12,7 +12,7 @@ setup(
     install_requires=[
         "oauth2client >= 4.1",
         "google-api-python-client >=1.7",
-        'httplib2'
+        'httplib2', 'yattag'
     ],
     packages=find_packages(),
     entry_points={
