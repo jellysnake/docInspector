@@ -13,6 +13,15 @@ def getHeaderTemplate(doc, stats: DocStats):
         with tag("style"):
             with open(path.abspath(folder + "style.css"), 'r') as file:
                 doc.asis(file.read())
+
+        # Make javadoc for charts
+        line("script", "", type="text/javascript", src="https://www.gstatic.com/charts/loader.js")
+        with tag("script", type="text/javascript"):
+            with open(path.abspath(folder + "TimelineChart.js"), 'r') as file:
+                doc.asis(file.read())
+        with tag("script", type="text/javascript"):
+            with open(path.abspath(folder + "IndividualCharts.js"), 'r') as file:
+                doc.asis(file.read())
     return doc
 
 
@@ -68,11 +77,8 @@ def getIndividualStats(doc, stats: DocStats):
                     with tag("td", align="center", width="50%;"):
                         line("div", "", id="removals_chart")
                 with tag("tr"):
-                    with tag("td", "", align="center", colspan="2"):
+                    with tag("td", "", align="center", colspan="2", width="50%;"):
                         line("div", "", id="percent_chart")
-
-                # Make javadoc for charts
-                line("script", "", type="text/javascript", src="https://www.gstatic.com/charts/loader.js")
 
                 doc = getChartScript("additions", doc, stats)
                 doc = getChartScript("removals", doc, stats)
@@ -82,33 +88,13 @@ def getIndividualStats(doc, stats: DocStats):
 
 def getChartScript(attribute: str, doc, stats: DocStats):
     doc, tag, text, line = doc.ttl()
-    # Additions Chart
-    with tag("script", type="text/javascript"):
-        editorLines = []
-        for i in stats.individuals.getEditors():
-            editor = stats.individuals.getEditor(i)
-            editorLines.append(f"['{editor.name}', {editor.__getattribute__(attribute) or 0}],")
-        editorLines = "\n".join(editorLines)
-        doc.asis(f"""
-                google.charts.load('current', {{'packages': ['corechart']}});
-                google.charts.setOnLoadCallback(drawChart);
-                
-                function drawChart() {{
-                    var data = google.visualization.arrayToDataTable([
-                        ['Editor', '{attribute.title()}'],
-                        {editorLines}
-                        ]);
-                    var options = {{
-                        title: '{attribute.title()}',
-                        titleTextStyle: {{'fontSize': 20}},
-                        width: 500,
-                        height: 200,
-                        pieHole: 0.4
-                    }};
-                    var chart = new google.visualization.PieChart(document.getElementById('{attribute}_chart'));
-                    chart.draw(data, options);
-                }}
-                """)
+    editorLines = []
+    for i in stats.individuals.getEditors():
+        editor = stats.individuals.getEditor(i)
+        editorLines.append(f"['{editor.name}', {editor.__getattribute__(attribute) or 0}],")
+    editorLines = "\n".join(editorLines)
+
+    line("script", f"getIndividualChart('{attribute.title()}', [{editorLines}]);", type="text/javascript")
     return doc
 
 
@@ -141,30 +127,6 @@ def getTimelineStats(doc, stats: DocStats):
 
         editorNames = ", ".join([f"'{stats.individuals.getEditor(editorId).name}'" for editorId in editors])
         incrementLines = "\n".join(incrementLines)
-        with tag("script", type="text/javascript"):
-            doc.asis(f"""google.charts.load("current", {{packages: ["corechart"]}});
-                google.charts.setOnLoadCallback(drawChart);
-    
-                function drawChart() {{
-                    var data = google.visualization.arrayToDataTable([
-                        ['Date', "Total Count", {editorNames + "," + editorNames}],
-                        {incrementLines}
-                        ]);
-                    var options = {{
-                        title: "Changes",
-                        colors: ['grey', 'red', 'green', 'blue', 'pink', 'red', 'green', 'blue', 'pink'],
-                        vAxis: {{title: 'Date', direction: -1}},
-                        hAxis: {{title: "Characters Edited"}},
-                        isStacked: true,
-                        animation: {{startup: true, duration: 700}},
-                        orientation: "vertical",
-                        series:{{ 0: {{type: 'steppedArea'}}}},
-                        height: 25 * {len(stats.timeline.increments)},
-                        seriesType: 'bars',
-                        explorer: {{keepInBounds: true, axis: "horizontal"}}
-                    }};
-            
-                    var chart = new google.visualization.ComboChart(document.getElementById("timeline_div"));
-                    chart.draw(data, options);
-                }}""")
+        line("script", f"makeTimeline([{editorNames}], [{incrementLines}], {len(stats.timeline.increments)});",
+             type="text/javascript")
     return doc
