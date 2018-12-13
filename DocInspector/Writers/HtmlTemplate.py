@@ -1,5 +1,4 @@
 from datetime import datetime, timezone
-from math import ceil
 
 from DocInspector.DocStats import DocStats
 
@@ -103,16 +102,6 @@ def getHeaderTemplate(doc, stats: DocStats):
                      "  position: relative;"
                      "  border-radius: 6px;"
                      "}")
-            # Span that shows additions
-            doc.asis(".add_span {"
-                     "  background-color: #0017ffa3;"
-                     "  float: right;"
-                     "}")
-            # Span that shows removals
-            doc.asis(".rem_span {"
-                     "  background-color: #fc4349d9;"
-                     "  float: left;"
-                     "}")
     return doc
 
 
@@ -149,7 +138,9 @@ def getGeneralStats(doc, stats: DocStats):
                 with tag("tr"):
                     with tag("td"):
                         line("b", 'Link:')
-                    line("td", f"https://docs.google.com/document/d/{stats.general.id}/view")
+                    with tag("td"):
+                        line("a", f"https://docs.google.com/document/d/{stats.general.id}/view",
+                             href=f"https://docs.google.com/document/d/{stats.general.id}/view")
     return doc
 
 
