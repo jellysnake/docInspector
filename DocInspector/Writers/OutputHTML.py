@@ -7,7 +7,8 @@ def outputHTML(stats: DocStats):
     doc, tag, text = Doc().tagtext()
     doc = getHeaderTemplate(doc, stats)
     with tag("body"):
-        doc = getGeneralStats(doc, stats)
-        doc = getIndividualStats(doc, stats)
+        with tag("div", klass="stats"):
+            doc = getGeneralStats(doc, stats)
+            doc = getIndividualStats(doc, stats)
         doc = getTimelineStats(doc, stats)
     return doc.getvalue()

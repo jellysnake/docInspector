@@ -120,7 +120,8 @@ def getGeneralStats(doc, stats: DocStats):
     doc, tag, text, line = doc.ttl()
     # Doc name
     with tag("div", klass="stat_container"):
-        line("div", stats.general.name, klass="stat_content")
+        with tag("div",  klass="stat_content"):
+            line("h1", stats.general.name)
 
     # General Stat Info
     with tag("div", klass="stat_container"):
@@ -148,29 +149,32 @@ def getGeneralStats(doc, stats: DocStats):
                 with tag("tr"):
                     with tag("td"):
                         line("b", 'Link:')
-                    line("tr", f"https://docs.google.com/document/d/{stats.general.id}/view")
+                    line("td", f"https://docs.google.com/document/d/{stats.general.id}/view")
     return doc
 
 
 def getIndividualStats(doc, stats: DocStats):
     doc, tag, text, line = doc.ttl()
-    with tag("div", klass="stat_content"):
-        line("h2", "Individual Stats")
-        with tag("table", "style", style="width: 100%;"):
-            # Make Chart Divs
-            with tag("tr"):
-                with tag("td", align="center", width="50%;"):
-                    line("div", "", id="additions_chart")
-                with tag("td", align="center", width="50%;"):
-                    line("div", "", id="removals_chart")
-                with tag("td", "", align="center", colspan="2"):
-                    line("div", "", id="percent_chart")
+    with tag("div", klass="stat_container"):
+        with tag("div", klass="stat_content"):
+            line("h2", "Individual Stats")
+            with tag("table", "style", style="width: 100%;"):
+                # Make Chart Divs
+                with tag("tr"):
+                    with tag("td", align="center", width="50%;"):
+                        line("div", "", id="additions_chart")
+                    with tag("td", align="center", width="50%;"):
+                        line("div", "", id="removals_chart")
+                with tag("tr"):
+                    with tag("td", "", align="center", colspan="2"):
+                        line("div", "", id="percent_chart")
 
-            # Make javadoc for charts
-            doc.stag("script", type="text/javascript", src="https://www.gstatic.com/charts/loader.js")
-            doc = getChartScript("additions", doc, stats)
-            doc = getChartScript("removals", doc, stats)
-            doc = getChartScript("percent", doc, stats)
+                # Make javadoc for charts
+                line("script", "", type="text/javascript", src="https://www.gstatic.com/charts/loader.js")
+
+                doc = getChartScript("additions", doc, stats)
+                doc = getChartScript("removals", doc, stats)
+                doc = getChartScript("percent", doc, stats)
     return doc
 
 
@@ -199,7 +203,7 @@ def getChartScript(attribute: str, doc, stats: DocStats):
                         height: 200,
                         pieHole: 0.4
                     }};
-                    var chart = new google.visualization.PieChart(document.getElementById('additions_chart'));
+                    var chart = new google.visualization.PieChart(document.getElementById('{attribute}_chart'));
                     chart.draw(data, options);
                 }}
                 """)
