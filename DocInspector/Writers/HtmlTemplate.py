@@ -160,14 +160,14 @@ def getIndividualStats(doc, stats: DocStats):
             # Make Chart Divs
             with tag("tr"):
                 with tag("td", align="center", width="50%;"):
-                    line("div", id="additions_chart")
+                    line("div", "", id="additions_chart")
                 with tag("td", align="center", width="50%;"):
-                    line("div", id="removals_chart")
-                with tag("td", align="center", colspan="2"):
-                    line("div", id="percent_chart")
+                    line("div", "", id="removals_chart")
+                with tag("td", "", align="center", colspan="2"):
+                    line("div", "", id="percent_chart")
 
             # Make javadoc for charts
-            line("script", type="text/javascript", src="https://www.gstatic.com/charts/loader.js")
+            doc.stag("script", type="text/javascript", src="https://www.gstatic.com/charts/loader.js")
             doc = getChartScript("additions", doc, stats)
             doc = getChartScript("removals", doc, stats)
             doc = getChartScript("percent", doc, stats)
@@ -184,7 +184,7 @@ def getChartScript(attribute: str, doc, stats: DocStats):
             editorLines.append(f"['{editor.name}', {editor.__getattribute__(attribute) or 0}],")
         editorLines = "\n".join(editorLines)
         doc.asis(f"""
-                google.charts.load('current', {'packages': ['corechart']});
+                google.charts.load('current', {{'packages': ['corechart']}});
                 google.charts.setOnLoadCallback(drawChart);
                 
                 function drawChart() {{
@@ -201,6 +201,7 @@ def getChartScript(attribute: str, doc, stats: DocStats):
                     }};
                     var chart = new google.visualization.PieChart(document.getElementById('additions_chart'));
                     chart.draw(data, options);
+                }}
                 """)
     return doc
 
@@ -240,8 +241,8 @@ def getEditorEntry(doc, increment, editorId):
         line("td", editor.name, width="80%")
         line("td", editor.additions or 0, align="right")
         with tag("td", width="10%", align="right"):
-            line("span", klass="add_span", style=f"width:{adds_percent}%;")
+            line("span", "", klass="add_span", style=f"width:{adds_percent}%;")
         with tag("td", width="10%", align="left"):
-            line("span", klass="rem_span", style=f"width:{rems_percent}%;")
+            line("span", "", klass="rem_span", style=f"width:{rems_percent}%;")
         line("td", editor.removals or 0, align="right")
     return doc
