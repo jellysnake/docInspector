@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from math import ceil
 
 from DocInspector.DocStats import DocStats
 
@@ -201,4 +202,46 @@ def getChartScript(attribute: str, doc, stats: DocStats):
                     var chart = new google.visualization.PieChart(document.getElementById('additions_chart'));
                     chart.draw(data, options);
                 """)
+    return doc
+
+
+def getTimelineStats(doc, stats: DocStats):
+    doc, tag, text, line = doc.ttl()
+    start_time = stats.timeline.timelineStart
+
+    with tag("div", klass="timeline"):
+        for i in range(stats.timeline.getNumIncrements()):
+            increment = stats.timeline.getIncrement(i)
+            if len(increment.editors) == 0:
+                continue
+            dt = start_time + (i * stats.timeline.incrementSize)
+            with tag("div", klass="container"):
+                with tag("div", klass="content"):
+                    line("h2", datetime.fromtimestamp(dt / 1000)
+                         .replace(tzinfo=timezone.utc)
+                         .astimezone(tz=None)
+                         .strftime('%d/%m/%Y - %I:%M:%S %p'))
+                    with tag("table", width="100%", cellpadding="0"):
+                        for editorId in increment.getEditors():
+                            doc = getEditorEntry(doc, increment, editorId)
+    return doc
+
+
+def getEditorEntry(doc, increment, editorId):
+    doc, tag, text, line = doc.ttl()
+    editor = increment.getEditor(editorId)
+    adds_percent = ceil(((editor.additions / increment.total.additions) * 100)
+                        if increment.total.additions
+                        else 0)
+    rems_percent = ceil(((editor.removals / increment.total.removals) * 100)
+                        if increment.total.removals
+                        else 0)
+    with tag("tr"):
+        line("td", editor.name, width="80%")
+        line("td", editor.additions or 0, align="right")
+        with tag("td", width="10%", align="right"):
+            line("span", klass="add_span", style=f"width:{adds_percent}%;")
+        with tag("td", width="10%", align="left"):
+            line("span", klass="rem_span", style=f"width:{rems_percent}%;")
+        line("td", editor.removals or 0, align="right")
     return doc
