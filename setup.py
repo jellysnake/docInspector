@@ -10,8 +10,8 @@ setup(
     description='A program made to provide statistical information about google documents and their revisions',
     long_description=open('README.md').read(),
     install_requires=[
-        "oauth2client >= 4.1",
-        "google-api-python-client >=1.7",
+        "oauth2client == 4.1",
+        "google-api-python-client ==1.7",
         'httplib2', 'yattag'
     ],
     packages=find_packages(),
