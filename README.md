@@ -50,6 +50,8 @@ This new project should enable the [Google Drive API](https://console.developers
 You will see a warning about the app being unverified. This is fine to ignore because you are only developing the application.  
 It does mean that you can only make requests to documents you have access to _on the same account you made the project under_.
 
+Once you have the credidentials, download them and replace the `credidentials.json` file under the`DocInspector` subdirectory.
+
 ### Dev Environment
 This step is actually very easy and hardly worth it's own section.  
 Because of how python works, all you need to do is add the `-e` flag to the pip install step of the usage section.
