@@ -41,7 +41,7 @@ The dev setup consists of two main parts.
 If you have any difficulties with the dev setup then feel free to open an issue or email me on my gmail address `iamajellysnake`
 
 
-###Obtaining Credentials
+### Obtaining Credentials
 In order to develop with this application, you will need to obtain your own credentials from the google cloud console. This is because this project is not verified by google currently (process is ongoing) and hence will error when used with some flags that require more permissive scopes
 
 Firstly, create an new project in the [Google Cloud Console](https://cloud.google.com/resource-manager/docs/creating-managing-projects). Then you need to [setup the project to work with oAuth 2](https://developers.google.com/identity/protocols/OAuth2UserAgent).  
