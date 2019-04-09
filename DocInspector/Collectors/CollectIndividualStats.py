@@ -16,8 +16,9 @@ def collectIndividualStats(stats: DocStats, service):
     # Collect all editors, excluding duplicates
     editors = set()
     for revision in rev_meta["items"]:
-        editor = revision["lastModifyingUserName"]
-        editors.add(editor)
+        if "lastModifyingUserName" in revision:
+            editor = revision["lastModifyingUserName"]
+            editors.add(editor)
 
     # Insert editors
     for editor in editors:

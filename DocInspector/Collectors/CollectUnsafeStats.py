@@ -11,7 +11,7 @@ def collectUnsafeStats(stats: DocStats, service, useFine):
     :param http: The http object to make calls with
     :param useFine: Flag that controls if the finer revision level should be used.
     """
-    http = service._http
+    http = service.httpClient
     # Make a document (akin to a `service`) and pass it into the child methods
     doc = Document(http, stats.general.id, useFine)
     getTotalChanges(doc, stats)

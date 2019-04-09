@@ -86,7 +86,9 @@ def authenticate(scope, args):
     if not creds or creds.invalid:
         flow = client.flow_from_clientsecrets(folder + '/credentials.json', scope)
         creds = tools.run_flow(flow, store, args)
-    service = build('drive', 'v2', http=creds.authorize(Http()))
+    http = creds.authorize(Http())
+    service = build('drive', 'v2', http=http)
+    service.httpClient = http
 
     if not args.cache and os.path.exists(folder + '/token.json'):
         os.remove(folder + '/token.json')
@@ -100,12 +102,14 @@ def writeToFile(data, file_path=None):
 
     If no path is provided then the data is simply written to stdout
     :param data:
-    :param path:
+    :param file_path:
     :return:
     """
     if file_path:
         # create file and write contents
         file_path = path.abspath(file_path)
+        if not os.path.exists(path.dirname(file_path)):
+            os.makedirs(path.dirname(file_path))
         with open(file_path, 'w', encoding='utf8') as f:
             f.write(data)
     else:

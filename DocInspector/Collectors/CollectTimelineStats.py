@@ -14,6 +14,7 @@ def collectTimelineStats(stats: DocStats, service):
 
     rev_meta = service.revisions().list(fileId=stats.general.id).execute()
     currentTime = calculateTimelineStart(timeToMilli(stats.general.creationDate), stats.timeline.incrementSize)
+    revisionList = rev_meta['items']
 
     i = 0
     # Iterate until we run out of revisions
@@ -21,9 +22,10 @@ def collectTimelineStats(stats: DocStats, service):
         increment = stats.timeline.makeIncrement()
         # Iterate whilst we are in the current increment
         # Check to make sure we don't run out of revisions
-        while i < len(rev_meta['items']) and timeToMilli(rev_meta['items'][i]['modifiedDate']) <= currentTime:
+        while i < len(revisionList) and timeToMilli(revisionList[i]['modifiedDate']) <= currentTime:
             # Add the data from this revision
-            name = rev_meta['items'][i]['lastModifyingUserName']
-            increment.makeEditor(name).name = name
+            if "lastModifyingUserName" in revisionList[i]:
+                name = revisionList[i]['lastModifyingUserName']
+                increment.makeEditor(name).name = name
             i += 1
         currentTime += stats.timeline.incrementSize
