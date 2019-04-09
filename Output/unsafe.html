@@ -1,0 +1,213 @@
+<head>
+  <title>Passengers and Parahumans</title>
+  <style>* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #474e5d;
+    font-family: Helvetica, sans-serif;
+}
+
+.stats {
+    position: fixed;
+    left: 20px;
+    width: 59%;
+}
+
+.stat_container {
+    padding: 10px 0px 10px 0px;
+    position: relative;
+    background-color: inherit;
+    width: 100%;
+}
+
+.stat_content {
+    padding: 20px 30px;
+    background-color: white;
+    position: relative;
+    border-radius: 6px;
+}
+
+table.general_stats_table td {
+    padding: 0px 20px 10px 0px;
+    word-break: break-word;
+}
+
+.timeline {
+    position: absolute;
+    right: 10px;
+    width: 39%;
+    margin: 0 auto;
+}
+
+.timeline::after {
+    content: '';
+    position: absolute;
+    width: 6px;
+    background-color: white;
+    top: -10px;
+    bottom: -1px;
+    right: 4.8%;
+}
+
+.container::before {
+    height: 0;
+    position: absolute;
+    top: 22px;
+    width: 0;
+    z-index: 1;
+    right: 30px;
+    border: medium solid white;
+    border-width: 10px 0 10px 10px;
+    border-color: transparent transparent transparent white;
+}
+
+.container {
+    padding: 10px 40px;
+    position: relative;
+    background-color: inherit;
+    width: 90%;
+    right: -4.7%;
+}
+
+.container::after {
+    content: '';
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    right: -17px;
+    background-color: white;
+    border: 4px solid #FF9F55;
+    top: 15px;
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.content {
+    padding: 20px 30px;
+    background-color: white;
+    position: relative;
+    border-radius: 6px;
+}</style>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">function makeTimeline(editorNames, incrementLines, incrementCount) {
+    google.charts.load("current", {packages: ["corechart"]});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+            ['Date', "Total Count"].concat(editorNames).concat(editorNames)]
+            .concat(incrementLines));
+        var options = {
+            title: "Changes",
+            vAxis: {title: 'Date', direction: -1},
+            hAxis: {title: "Characters Edited"},
+            isStacked: true,
+            animation: {startup: true, duration: 700},
+            orientation: "vertical",
+            series: {0: {type: 'steppedArea'}},
+            height: 25 * incrementCount,
+            seriesType: 'bars',
+            explorer: {keepInBounds: true, axis: "horizontal"}
+        };
+
+        var chart = new google.visualization.ComboChart(document.getElementById("timeline_div"));
+        chart.draw(data, options);
+    }
+}</script>
+  <script type="text/javascript">function getIndividualChart(name, lines) {
+    google.charts.load('current', {'packages': ['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+            ['Editor', name]].concat(lines));
+        var options = {
+            title: name,
+            titleTextStyle: {'fontSize': 20},
+            pieHole: 0.4
+        };
+        var chart = new google.visualization.PieChart(document.getElementById(name.toLowerCase() + "_chart"));
+        chart.draw(data, options);
+    }
+
+}</script>
+</head>
+<body>
+  <div class="stats">
+    <div class="stat_container">
+      <div class="stat_content">
+        <h1>Passengers and Parahumans</h1>
+      </div>
+    </div>
+    <div class="stat_container">
+      <div class="stat_content">
+        <h2>General Stats</h2>
+        <table class="general_stats_table">
+          <tr>
+            <td>
+              <b>ID:</b>
+            </td>
+            <td>1ciJmvi14sycMAmiFIdD-_QK8Fym8wrLMudRnvitdNtE</td>
+          </tr>
+          <tr>
+            <td>
+              <b>Creation Date:</b>
+            </td>
+            <td>23/02/2019 - 02:14:50 PM</td>
+          </tr>
+          <tr>
+            <td>
+              <b>Link:</b>
+            </td>
+            <td>
+              <a href="https://docs.google.com/document/d/1ciJmvi14sycMAmiFIdD-_QK8Fym8wrLMudRnvitdNtE/view">https://docs.google.com/document/d/1ciJmvi14sycMAmiFIdD-_QK8Fym8wrLMudRnvitdNtE/view</a>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="stat_container">
+      <div class="stat_content">
+        <h2>Individual Stats</h2>
+        <table style="width: 100%;">
+          <tr>
+            <td align="center" width="50%;">
+              <div id="additions_chart"></div>
+            </td>
+            <td align="center" width="50%;">
+              <div id="removals_chart"></div>
+            </td>
+          </tr>
+          <tr>
+            <td  align="center" colspan="2" width="50%;">
+              <div id="percent_chart"></div>
+            </td>
+          </tr>
+          <script type="text/javascript">getIndividualChart('Additions', [['A Chameleon', 32],
+['Jarod Cooke', 20355],
+['Quinn Roberts', 32520],
+['Frisky Foxx', 5400],]);</script>
+          <script type="text/javascript">getIndividualChart('Removals', [['A Chameleon', 2],
+['Jarod Cooke', 1197],
+['Quinn Roberts', 26951],
+['Frisky Foxx', 122],]);</script>
+          <script type="text/javascript">getIndividualChart('Percent', [['A Chameleon', 0.03774171347379171],
+['Jarod Cooke', 23.923806140798792],
+['Quinn Roberts', 66.01580711764315],
+['Frisky Foxx', 6.129698288302289],]);</script>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="timeline" id="timeline_div">
+    <script type="text/javascript">makeTimeline(['A Chameleon', 'Jarod Cooke', 'Quinn Roberts', 'Frisky Foxx'], [[new Date(1550793600000), 0,18,2966,0 ,0 ,0,-104,0 ,0 ],
+[new Date(1550880000000), 2880,0 ,0 ,14,0 ,0 ,0 ,-1,0 ],
+[new Date(1550966400000), 2893,0,9816,15288,254,-1,0,-4669,-116],
+[new Date(1551052800000), 23465,0 ,0,15038,30,0 ,-1093,-22277,-1],
+[new Date(1551139200000), 15162,2,7573,2180,4712,-1,0,-4,-5],
+[new Date(1551225600000), 29619,0,0,0,0,0,0,0,0],
+[new Date(1551312000000), 29619,12,0 ,0 ,404,0,0 ,0 ,0],], 7);</script>
+  </div>
+</body>

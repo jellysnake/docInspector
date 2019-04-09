@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Terasology Tower Defence Proposal</title>
+    <!-- Css Style -->
+    <style>
+        /* <== General & Generic Formatting ==> */
+        body {
+            background-color: #474e5d;
+            font-family: Helvetica, sans-serif;
+        }
+
+        .containerStyle {
+            background-color: white;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+            margin: 10px;
+            padding: 10px;
+        }
+
+        .yesJavascript {
+            display: none;
+        }
+
+        /* Center Align the heading */
+        .outerCenter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+
+        /* Card position formatting */
+        .statDiv {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            bottom: 10px;
+            width: calc(60% - 10px);
+        }
+
+        .timelineDiv {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            bottom: 10px;
+            width: calc(40% - 10px);
+        }
+
+        /* <== Title Formatting ==> */
+        h1 {
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        /* <== General Stats Formatting ==> */
+        /* Bold first column in the table */
+        .generalTable tr td:first-child {
+            font-weight: bold;
+        }
+
+        /* Format the table */
+        .generalTable {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+            position: relative;
+            left: 0;
+            right: 0;
+        }
+
+        /* <== Individual formatting ==> */
+        .individualTable {
+            display: block;
+            position: relative;
+            left: 0;
+            min-width: 0;
+            right: 0;
+            border-collapse: collapse;
+            overflow-x: auto;
+            border: #CCC;
+        }
+
+        /* Borders for cells */
+        .individualTable tr:not(:last-child) {
+            border-bottom: 1px solid #CCC;
+        }
+
+        .individualTable tr td:first-child {
+            border-right: 1px solid #CCC;
+        }
+
+        /* Padding */
+        .individualTable td,
+        .individualTable th {
+            padding: 10px;
+        }
+
+        /* Cell Colours */
+        .individualTable tr:hover {
+            background-color: #EEE;
+        }
+
+        .individualTable th {
+            background-color: #999;
+        }
+
+        /* <== Timeline Formatting ==> */
+
+        .timelineTable {
+            border-collapse: collapse;
+        }
+
+        /* Borders */
+        .timelineTable tr {
+            border-bottom: 1px solid #CCC;
+        }
+
+        .timelineTable tr td:first-child,
+        .timelineTable tr th:first-child {
+            border-right: 1px solid #BBB;
+        }
+
+        .timelineTable tr td:nth-child(2),
+        .timelineTable tr th:nth-child(2) {
+            border-right: 2px solid #777;
+        }
+
+        /* Colours */
+        .timelineTable th {
+            background-color: #999;
+        }
+
+        /* Padding and per cell */
+        .timelineTable td,
+        .timelineTable th {
+            padding: 4px 3px;
+            text-align: center;
+        }
+
+        .timelineTable tr td:first-child {
+            font-style: italic;
+            font-size: small;
+        }
+    </style>
+
+    <!--Required Scripts-->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <!--Chart Javascript-->
+    <script type="text/javascript">function makeTimeline(editorNames, incrementLines, incrementCount) {
+        google.charts.load("current", {packages: ["corechart"]});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Date', "Total Count"].concat(editorNames).concat(editorNames)]
+                .concat(incrementLines));
+            var options = {
+                title: "Changes",
+                vAxis: {title: 'Date', direction: -1},
+                hAxis: {title: "Characters Edited"},
+                isStacked: true,
+                animation: {startup: true, duration: 700},
+                orientation: "vertical",
+                series: {0: {type: 'steppedArea'}},
+                height: 25 * incrementCount,
+                seriesType: 'bars',
+                explorer: {keepInBounds: true, axis: "horizontal"}
+            };
+
+            var chart = new google.visualization.ComboChart(document.getElementById("timeline_div"));
+            chart.draw(data, options);
+        }
+    }</script>
+    <script type="text/javascript">function getIndividualChart(name, lines) {
+        google.charts.load('current', {'packages': ['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Editor', name]].concat(lines));
+            var options = {
+                title: name,
+                titleTextStyle: {'fontSize': 20},
+                pieHole: 0.4
+            };
+            var chart = new google.visualization.PieChart(document.getElementById(name.toLowerCase() + "_chart"));
+            chart.draw(data, options);
+        }
+
+    }</script>
+</head>
+<body>
+<div class="statDiv">
+    <div class="containerStyle outerCenter">
+        <h1>Terasology Tower Defence Proposal</h1>
+    </div>
+    <div class="containerStyle outerCenter">
+        <table class="generalTable">
+            <tr>
+                <td>ID</td>
+                <td>1DN4LxL8nSd9ZUbqhpXIfasmm8PQykJonOw7nUpKXpoo</td>
+            </tr>
+            <tr>
+                <td>Creation Date</td>
+                <td>13/03/2018 - 03:57:26 PM</td>
+            </tr>
+            <tr>
+                <td>Link</td>
+                <td><a href="https://docs.google.com/document/d/1DN4LxL8nSd9ZUbqhpXIfasmm8PQykJonOw7nUpKXpoo/view">https://docs.google.com/document/d/1DN4LxL8nSd9ZUbqhpXIfasmm8PQykJonOw7nUpKXpoo/view</a>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="containerStyle individualStats">
+        <div class="noJavascript outerCenter">
+            <table class="individualTable">
+                <tr>
+                    <th>Name</th>
+                    <th>Added</th>
+                    <th>Removed</th>
+                    <th>Percent</th>
+                </tr>
+                <tr>
+                    <td>A Chameleon</td>
+                    <td>32</td>
+                    <td>2</td>
+                    <td>0.038</td>
+                </tr>
+                <tr>
+                    <td>Jarod Cooke</td>
+                    <td>20355</td>
+                    <td>1197</td>
+                    <td>23.924</td>
+                </tr>
+                <tr>
+                    <td>Quinn Roberts</td>
+                    <td>32520</td>
+                    <td>26951</td>
+                    <td>66.016</td>
+                </tr>
+                <tr>
+                    <td>Frisky Foxx</td>
+                    <td>5400</td>
+                    <td>122</td>
+                    <td>6.130</td>
+                </tr>
+            </table>
+        </div>
+        <div class="yesJavascript">
+            yesjs
+        </div>
+    </div>
+</div>
+<div class="timelineDiv">
+    <div class="containerStyle">
+        <div class="noJavascript outerCenter">
+            <table class="timelineTable">
+                <tr>
+                    <th>Date</th>
+                    <th>Size</th>
+                    <th>A Chameleon</th>
+                    <th>Jarod Cooke</th>
+                    <th>Quinn Roberts</th>
+                    <th>Frisky Foxx</th>
+                </tr>
+                <tr>
+                    <td>22/02/2019</td>
+                    <td>2880</td>
+                    <td>18</td>
+                    <td>2862</td>
+                    <td>0</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>23/02/2019</td>
+                    <td>2893</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>13</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>24/02/2019</td>
+                    <td>23465</td>
+                    <td>-1</td>
+                    <td>9816</td>
+                    <td>10619</td>
+                    <td>138</td>
+                </tr>
+                <tr>
+                    <td>25/02/2019</td>
+                    <td>15162</td>
+                    <td>0</td>
+                    <td>-1093</td>
+                    <td>-7239</td>
+                    <td>29</td>
+                </tr>
+                <tr>
+                    <td>26/02/2019</td>
+                    <td>29619</td>
+                    <td>1</td>
+                    <td>7573</td>
+                    <td>2176</td>
+                    <td>4707</td>
+                </tr>
+                <tr>
+                    <td>27/02/2019</td>
+                    <td>29619</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>28/02/2019</td>
+                    <td>30035</td>
+                    <td>12</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>404</td>
+                </tr>
+            </table>
+        </div>
+        <div class="yesJavascript">
+            yesjs
+        </div>
+    </div>
+</div>
+</body>
+</html>
